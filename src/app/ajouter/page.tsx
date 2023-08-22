@@ -10,43 +10,71 @@ import arrowLeft from "../../../public/assets/images/arrow-left.svg";
 
 import { UserContext } from "../layout";
 
-const handleAddProductSubmit = (e: FormEvent<HTMLFormElement>) => {
-
-    const inputNameProduct = document.getElementsByClassName("main--section--add--product--form--input--name")[0];
-    const inputPlaceProduct = document.getElementsByClassName("main--section--add--product--form--input--place")[0];
-    const deliveryRadioProduct = document.getElementsByName("main--section--add--product--form--checkbox--delivery");
-
-    e.preventDefault();
-
-    let flag: boolean = false
-    let nameClassRadioDelivery: string = "";
-    Array.from(deliveryRadioProduct).forEach( (input) => {
-
-        if ((input as HTMLInputElement).checked) {
-
-            flag = true;
-            nameClassRadioDelivery = (input as HTMLInputElement).value;
-        }
-    });
-
-    if ((inputNameProduct as HTMLInputElement).value == "" || (inputPlaceProduct as HTMLInputElement).value == "" || !flag) {
-
-        const asideError = document.getElementsByClassName("aside aside--error")[0];
-        const spanMessage: Element = asideError.getElementsByClassName("aside--error--span")[0];
-
-        spanMessage.textContent = "Veuillez remplir tous les champs";
-        asideError.classList.add("active");
-
-        setTimeout(() => {
-            asideError.classList.remove("active");
-        }, 3000);
-    }
-
-};
-
 export default function Add() {
 
     const userContext = useContext(UserContext);
+
+    const handleAddProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
+
+        const inputNameProduct = document.getElementsByClassName("main--section--add--product--form--input--name")[0];
+        const inputPlaceProduct = document.getElementsByClassName("main--section--add--product--form--input--place")[0];
+        const deliveryRadioProduct = document.getElementsByName("main--section--add--product--form--checkbox--delivery");
+    
+        e.preventDefault();
+    
+        let flag: boolean = false
+        let nameClassRadioDelivery: string = "";
+        Array.from(deliveryRadioProduct).forEach( (input) => {
+    
+            if ((input as HTMLInputElement).checked) {
+    
+                flag = true;
+                nameClassRadioDelivery = (input as HTMLInputElement).value;
+            }
+        });
+    
+        const asideError: Element = document.getElementsByClassName("aside aside--error")[0];
+        const spanMessage: Element = asideError.getElementsByClassName("aside--error--span")[0];
+    
+        if ((inputNameProduct as HTMLInputElement).value == "" || (inputPlaceProduct as HTMLInputElement).value == "" || !flag) {
+    
+            spanMessage.textContent = "Veuillez remplir tous les champs";
+            asideError.classList.add("active");
+    
+            setTimeout(() => {
+                asideError.classList.remove("active");
+            }, 3000);
+        }
+    
+        else if ((inputNameProduct as HTMLInputElement).value.length > 0 && (inputPlaceProduct as HTMLInputElement).value.length > 0 && flag) {
+    
+            spanMessage.textContent = "Produit ajouté avec succès";
+            asideError.classList.add("aside--success", "active_success");
+    
+            setTimeout(() => {
+                asideError.classList.remove("aside--success", "active_success");
+            }, 3000);
+    
+            const radioValueChecked = (document.getElementsByClassName(nameClassRadioDelivery)[0] as HTMLInputElement);
+
+            const response = await fetch("http://127.0.0.1:8000/api/insertproduct", {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${userContext.user_jwt}`
+                },
+                body: JSON.stringify({
+                    name_product: (inputNameProduct as HTMLInputElement).value,
+                    place_product: (inputPlaceProduct as HTMLInputElement).value,
+                    delivery_product: radioValueChecked.value.replace("main--section--add--product--form--input--delivery--", ""),
+                    jwt: userContext.user_jwt
+                })
+            });
+            
+            const data = await response.json();
+            console.log(data);
+        }
+    };
 
     if (userContext.user_jwt !== "") {
         return (

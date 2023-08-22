@@ -58,7 +58,7 @@ export default function RootLayout({
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await fetch('http://127.0.0.1:8000/api/getproducts');
+      const response = await fetch("http://127.0.0.1:8000/api/getproducts");
       const data = await response.json();
       setDataProducts(data);
     };
