@@ -8,15 +8,19 @@ import { FormEvent, useContext} from "react";
 
 import arrowLeft from "../../../public/assets/images/arrow-left.svg";
 
-import { UserContext } from "../layout";
+import { UserContext, DataContext } from "../layout";
 
 export default function Add() {
 
     const userContext = useContext(UserContext);
+    const dataContext = useContext(DataContext);
+
+    console.log(dataContext);
 
     const handleAddProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
 
         const inputNameProduct = document.getElementsByClassName("main--section--add--product--form--input--name")[0];
+        const textareaDescriptionProduct: any = document.getElementsByClassName("main--section--add--product--form--textarea--description")[0];
         const inputPlaceProduct = document.getElementsByClassName("main--section--add--product--form--input--place")[0];
         const deliveryRadioProduct = document.getElementsByName("main--section--add--product--form--checkbox--delivery");
     
@@ -36,7 +40,7 @@ export default function Add() {
         const asideError: Element = document.getElementsByClassName("aside aside--error")[0];
         const spanMessage: Element = asideError.getElementsByClassName("aside--error--span")[0];
     
-        if ((inputNameProduct as HTMLInputElement).value == "" || (inputPlaceProduct as HTMLInputElement).value == "" || !flag) {
+        if ((inputNameProduct as HTMLInputElement).value == "" || (inputPlaceProduct as HTMLInputElement).value == "" || textareaDescriptionProduct.value == "" || !flag) {
     
             spanMessage.textContent = "Veuillez remplir tous les champs";
             asideError.classList.add("active");
@@ -46,7 +50,7 @@ export default function Add() {
             }, 3000);
         }
     
-        else if ((inputNameProduct as HTMLInputElement).value.length > 0 && (inputPlaceProduct as HTMLInputElement).value.length > 0 && flag) {
+        else if ((inputNameProduct as HTMLInputElement).value.length > 0 && (inputPlaceProduct as HTMLInputElement).value.length > 0 && textareaDescriptionProduct.value.length > 0 && flag) {
     
             spanMessage.textContent = "Produit ajouté avec succès";
             asideError.classList.add("aside--success", "active_success");
@@ -65,26 +69,36 @@ export default function Add() {
                 },
                 body: JSON.stringify({
                     name_product: (inputNameProduct as HTMLInputElement).value,
+                    description_product: textareaDescriptionProduct.value,
                     place_product: (inputPlaceProduct as HTMLInputElement).value,
                     delivery_product: radioValueChecked.value.replace("main--section--add--product--form--input--delivery--", ""),
-                    jwt: userContext.user_jwt
                 })
             });
             
             const data = await response.json();
-            console.log(data);
+
+            if (data.response == true) {
+
+                dataContext.setAddProductCount(1);
+            }
+
+            if (data.response == false) {
+
+                asideError.classList.remove("aside--success", "active_success");
+
+                spanMessage.textContent = "Erreur d'authentification";
+                asideError.classList.add("active");
+        
+                setTimeout(() => {
+                    asideError.classList.remove("active");
+                }, 3000);
+            }
         }
     };
 
     if (userContext.user_jwt !== "") {
         return (
             <main className="main">
-
-                <aside className="aside aside--error">
-                    <span className="aside--error--span">
-
-                    </span>
-                </aside>
 
                 <Link className="main--anchor--back" href="/">
                     <Image className="main--anchor--back--img" src={arrowLeft} alt="arrow-left-image"/>
@@ -96,12 +110,18 @@ export default function Add() {
 
                     <form className="main--section--add--product--form" method="POST" onSubmit={handleAddProductSubmit}>
 
-                        <div className="main--section--add--product--form--delivery--yes--wrap">
+                        <div className="main--section--add--product--form--input--wrap">
                             <label className="main--section--add--product--form--label--name" htmlFor="main--section--add--product--form--input--name">Nom du produit:</label>
                             <input className="main--section--add--product--form--input--name" type="text" name="main--section--add--product--form--input--name" id="main--section--add--product--form--input--name"/>
                         </div>
 
-                        <div className="main--section--add--product--form--delivery--no--wrap">
+                        <div className="main--section--add--product--form--input--wrap">
+                            <label className="main--section--add--product--form--label--description" htmlFor="main--section--add--product--form--textarea--description">Description</label>
+                            <textarea className="main--section--add--product--form--textarea--description" name="main--section--add--product--form--textarea--description" id="main--section--add--product--form--textarea--description" placeholder="Décrivez votre produit">
+                            </textarea>
+                        </div>
+
+                        <div className="main--section--add--product--form--input--wrap">
                             <label className="main--section--add--product--form--label--place" htmlFor="main--section--add--product--form--input--place">Lieu:</label>
                             <input className="main--section--add--product--form--input--place" type="text" name="main--section--add--product--form--input--place" id="main--section--add--product--form--input--place"/>
                         </div>
@@ -122,6 +142,12 @@ export default function Add() {
                         <button className="main--section--add--product--form--submit" name="main--section--add--product--form--submit" id="main--section--add--product--form--submit">Valider</button>
                     </form>
                 </section>
+
+                <aside className="aside aside--error">
+                    <span className="aside--error--span">
+
+                    </span>
+                </aside>
             </main>
         );
     }

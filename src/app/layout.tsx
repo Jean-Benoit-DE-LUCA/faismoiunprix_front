@@ -2,7 +2,7 @@
 
 import './style.css';
 
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 
 import Header from '../../components/Header/page';
 
@@ -11,7 +11,8 @@ import { IUserData } from './connexion/page';
 export interface Product {
   id: number;
   product_name: string;
-  product_price: string;
+  /*product_price: string;*/
+  product_description: string;
   product_place: string;
   product_delivery: number;
   created_at: string;
@@ -20,6 +21,7 @@ export interface Product {
 
 export interface DContext {
   data: Array<Product>;
+  setAddProductCount: any
 }
 
 export interface UContext {
@@ -27,7 +29,8 @@ export interface UContext {
 }
 
 export const DataContext = createContext<DContext>({
-  data: []
+  data: [],
+  setAddProductCount: () => {}
 });
 
 export const UserContext = createContext<IUserData>({
@@ -44,6 +47,11 @@ export default function RootLayout({
 }) {
 
   const [dataProducts, setDataProducts] = useState<Array<Product>>([]);
+  const [addProductCount, setAddProductCount] = useState<number>(0);
+
+  const updateProductCount = (valueCount: number) => {
+    setAddProductCount(addProductCount + valueCount);
+  }
 
   const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_jwt: "", setUserData: () => {}});
 
@@ -62,11 +70,12 @@ export default function RootLayout({
       const data = await response.json();
       setDataProducts(data);
     };
-    fetchProducts()
-  }, []);
+    fetchProducts();
+  }, [addProductCount]);
 
   const objDataContext: DContext = {
-    data: dataProducts
+    data: dataProducts,
+    setAddProductCount: updateProductCount
   };
 
   const objUserContext: IUserData = {

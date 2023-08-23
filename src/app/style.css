@@ -295,7 +295,7 @@ body {
     flex-flow: column nowrap;
     gap: 2rem;
     border: 2px solid #575c54;
-    height: 20rem;
+    height: 30rem;
     border-radius: 5px;
     width: 12rem;
 }
@@ -338,6 +338,11 @@ body {
     width: 70%;
 }
 
+.main--section--add--product--form--input--wrap {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
 .main--section--add--product--form--input--name, .main--section--add--product--form--input--place {
     height: 1.3rem;
     width: 90%;
@@ -350,6 +355,13 @@ body {
     height: 1.5rem;
     margin: 0 auto;
     border-radius: 5px;
+}
+
+.main--section--add--product--form--textarea--description {
+    height: 8rem;
+    width: 90%;
+    margin: 0 auto;
+    resize: none;
 }
 
 .main--section--div {

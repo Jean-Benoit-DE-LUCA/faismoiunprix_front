@@ -15,16 +15,14 @@ export default function App(): ReactElement {
     value: string,
   }
 
-  interface IProduct {
+  /*interface IProduct {
     products: Array<string|number|boolean>
-  }
+  }*/
 
   const dataContext = useContext(DataContext);
   const userContext = useContext(UserContext);
 
   const [val, setVal] = useState<IInputChange>({value: ""});
-  const [prod, setProd] = useState<IProduct>({products: []});
-  const [getDataProducts, setDataProducts] = useState<Array<Product>>([]);
 
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVal({value: e.target.value});
@@ -114,11 +112,11 @@ export default function App(): ReactElement {
       </section>
 
       <ul className="main--ul--results">
-        {filterInputFunc(val.value).map( (elem: {id: number, product_name: string, product_price: string, product_place: string}) => 
+        {filterInputFunc(val.value).map( (elem: {id: number, product_name: string, /*product_price: string, */product_place: string}) => 
           <Link className="main--ul--results--anchor" href="" key={elem.id}>
             <li className="main--ul--results--li">
               <span className="main--ul--results--li--span--name">{elem.product_name}</span>
-              <span className="main--ul--results--li--span--prix">{elem.product_price}€</span>
+              {/*<span className="main--ul--results--li--span--prix">{elem.product_price}€</span>*/}
               <span className="main--ul--results--li--span--place">{elem.product_place}</span>
             </li>
           </Link>
