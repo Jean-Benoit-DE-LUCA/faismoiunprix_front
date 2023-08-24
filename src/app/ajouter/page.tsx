@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { FormEvent, useContext} from "react";
 
@@ -11,6 +12,8 @@ import arrowLeft from "../../../public/assets/images/arrow-left.svg";
 import { UserContext, DataContext } from "../layout";
 
 export default function Add() {
+
+    const router = useRouter();
 
     const userContext = useContext(UserContext);
     const dataContext = useContext(DataContext);
@@ -80,6 +83,10 @@ export default function Add() {
             if (data.response == true) {
 
                 dataContext.setAddProductCount(1);
+
+                setTimeout(() => {
+                    router.push("/");
+                }, 3000);
             }
 
             if (data.response == false) {
