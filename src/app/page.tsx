@@ -113,7 +113,7 @@ export default function App(): ReactElement {
 
       <ul className="main--ul--results">
         {filterInputFunc(val.value).map( (elem: {id: number, product_name: string, /*product_price: string, */product_place: string}) => 
-          <Link className="main--ul--results--anchor" href="" key={elem.id}>
+          <Link className="main--ul--results--anchor" href={`/produits/${elem.id}`} key={elem.id}>
             <li className="main--ul--results--li">
               <span className="main--ul--results--li--span--name">{elem.product_name}</span>
               {/*<span className="main--ul--results--li--span--prix">{elem.product_price}€</span>*/}

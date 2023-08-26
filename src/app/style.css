@@ -465,3 +465,109 @@ body {
     color: var(--borderCol);
     font-weight: bold;
 }
+
+.main--article--specific--product--h1 {
+    text-align: center;
+    font-family: var(--fontText);
+    color: var(--letterColor);
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 1rem;
+}
+
+.main--article--specific--product--h1--span {
+    display: block;
+    width: 70%;
+    border-bottom: 2px solid var(--borderCol);
+    margin: 0 auto;
+}
+
+.main--article--specific--product--section--description--div--description--p {
+    width: 11.6rem;
+    margin: 1rem auto;
+    font-family: var(--fontText);
+    font-size: .8rem;
+}
+
+.main--article--specific--product--section--span {
+    margin-top: 1rem;
+}
+
+.main--article--specific--product--section--images {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 0.3rem;
+}
+
+.main--article--specific--product--section--images--div--main {
+    height: 10rem;
+    width: 11.6rem;
+    margin: 0 auto;
+    border: 1px ridge var(--borderCol);
+    position: relative;
+}
+
+.main--article--specific--product--section--images--div--main--img {
+    position: unset;
+}
+
+.main--article--specific--product--section--images--div--others {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 5.7rem);
+    grid-auto-rows: 5.7rem;
+    column-gap: 0.3rem;
+    row-gap: 0.3rem;
+}
+
+.main--article--specific--product--section--images--div--others--grid--element--img--wrap {
+    position: relative;
+    border: 1px ridge var(--borderCol);
+}
+
+.main--article--specific--product--section--images--div--others--wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main--article--specific--product--section--offer--div {
+    text-align: center;
+}
+
+.main--article--specific--product--section--offer--div--button {
+    font-family: var(--fontText);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.main--article--specific--product--section--offer--div--input {
+    margin: 1rem auto;
+    height: 1.5rem;
+    font-size: 1.5rem;
+    width: 11.6rem;
+}
+
+.main--article--specific--product--section--offer--div--input--span {
+    position: absolute;
+    right: -0.2rem;
+    width: 1rem;
+    background-color: white;
+    height: 1.6rem;
+    font-family: var(--fontText);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main--article--specific--product--section--offer--div--input--wrap {
+    position: relative;
+    height: 4rem;
+    width: 11.6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}

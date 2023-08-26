@@ -21,7 +21,9 @@ export interface Product {
 
 export interface DContext {
   data: Array<Product>;
-  setAddProductCount: any
+  setAddProductCount: any;
+  getProduct: any;
+  setProduct: any;
 }
 
 export interface UContext {
@@ -30,7 +32,9 @@ export interface UContext {
 
 export const DataContext = createContext<DContext>({
   data: [],
-  setAddProductCount: () => {}
+  setAddProductCount: () => {},
+  getProduct: [],
+  setProduct: () => {}
 });
 
 export const UserContext = createContext<IUserData>({
@@ -48,12 +52,13 @@ export default function RootLayout({
 
   const [dataProducts, setDataProducts] = useState<Array<Product>>([]);
   const [addProductCount, setAddProductCount] = useState<number>(0);
+  const [getProduct, setGetProduct] = useState<Array<any>>([]);
+
+  const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_jwt: "", setUserData: () => {}});
 
   const updateProductCount = (valueCount: number) => {
     setAddProductCount(addProductCount + valueCount);
   }
-
-  const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_jwt: "", setUserData: () => {}});
 
   const updateUserData = (valueMail: string, valueName: string, valueJwt: string) => {
     setUserData({
@@ -62,6 +67,10 @@ export default function RootLayout({
       user_jwt: valueJwt,
       setUserData: () => {}
     });
+  };
+
+  const updateGetProduct = (productArray: Array<any>) => {
+    setGetProduct(productArray);
   };
 
   useEffect(() => {
@@ -75,7 +84,9 @@ export default function RootLayout({
 
   const objDataContext: DContext = {
     data: dataProducts,
-    setAddProductCount: updateProductCount
+    setAddProductCount: updateProductCount,
+    getProduct: [],
+    setProduct: updateGetProduct
   };
 
   const objUserContext: IUserData = {
