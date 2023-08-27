@@ -36,7 +36,7 @@ export default function App(): ReactElement {
   }
 
   const handleLogout = (): void => {
-    userContext.setUserData("", "", "");
+    userContext.setUserData("", "", "", "");
   };
 
   const errorAuthFunc = () => {

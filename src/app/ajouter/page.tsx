@@ -18,8 +18,6 @@ export default function Add() {
     const userContext = useContext(UserContext);
     const dataContext = useContext(DataContext);
 
-    console.log(dataContext);
-
     const handleAddProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
 
         const inputNameProduct = document.getElementsByClassName("main--section--add--product--form--input--name")[0];

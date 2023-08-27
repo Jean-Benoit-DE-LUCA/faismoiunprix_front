@@ -14,6 +14,7 @@ import { DataContext, UserContext } from "../layout";
 export interface IUserData {
     user_mail: string;
     user_name: string;
+    user_id: number;
     user_jwt: string;
     setUserData: any
 }
@@ -70,7 +71,7 @@ export default function Connection(): ReactElement {
         const data = await response.json();
         
         if (data.hasOwnProperty("jwt")) {
-            userContext.setUserData(user_mail, data.user_name, data.jwt);
+            userContext.setUserData(user_mail, data.user_name, data.user_id, data.jwt);
             spanMessage.textContent = "Authentification réalisée avec succès";
             asideError.classList.add("aside--success", "active_success");
 

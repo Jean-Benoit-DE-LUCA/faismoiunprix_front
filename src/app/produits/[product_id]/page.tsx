@@ -1,8 +1,11 @@
 "use client";
 
-import Image from "next/image";
+import arrowLeft from "../../../../public/assets/images/arrow-left.svg";
 
-import { DataContext } from "@/app/layout";
+import Image from "next/image";
+import Link from "next/link";
+
+import { DataContext, UserContext } from "@/app/layout";
 import { useEffect, useContext, useState } from "react"
 
 import { Product } from "@/app/layout";
@@ -14,6 +17,7 @@ export interface ISpecificProduct {
 export default function ProductId({ params }: { params: {product_id: string}}) {
 
     const dataContext = useContext(DataContext);
+    const userContext = useContext(UserContext);
 
     const [getProduct, setGetProduct] = useState<ISpecificProduct>({productFound: []});
 
@@ -25,14 +29,65 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
         setGetProduct(data);
     };
 
+    const handleSubmitOffer = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        
+        const valueOffer = (document.getElementsByClassName("main--article--specific--product--section--offer--div--input")[0] as HTMLInputElement);
+
+        const asideErrorOffer: Element = document.getElementsByClassName("aside aside--error aside--error--offer")[0];
+        const spanElementError: Element = document.getElementsByClassName("aside--error--span")[0];
+
+        if (userContext.user_jwt == "") {
+
+            spanElementError.textContent = "Veuillez vous authentifier pour emettre une offre";
+            asideErrorOffer.classList.add("active");
+
+            setTimeout(() => {
+                asideErrorOffer.classList.remove("active");
+            }, 3000);
+        }
+
+        else if (userContext.user_jwt.length > 0) {
+
+            const response = await fetch("http://127.0.0.1:8000/api/insertoffer", {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization": `Bearer ${userContext.user_jwt}`
+                },
+                body: JSON.stringify({
+                    offer_submitted: valueOffer.value,
+                    user_id: userContext.user_id,
+                    product_id: params.product_id,
+                    offer_accepted: 0
+                })
+            });
+
+            const data = await response.json();
+            
+            if (data.response == true) {
+
+                spanElementError.textContent = "Offre envoyée avec succès!";
+                asideErrorOffer.classList.add("aside--success", "active_success");
+
+                setTimeout(() => {
+                    asideErrorOffer.classList.remove("aside--success", "active_success");
+                }, 3000);
+            }
+        }
+    };
+
     useEffect(() => {
         fetchProduct();
     }, []);
 
-    console.log(getProduct.productFound[0]);
-
     return (
         <main className="main">
+
+            <Link className="main--anchor--back" href="/">
+                <Image className="main--anchor--back--img" src={arrowLeft} alt="arrow-left-image"/>
+                <span className="main--anchor--back--span">Retour</span>
+            </Link>
 
             {getProduct.productFound[0] !== undefined ?
             (
@@ -98,6 +153,12 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
                 <section className="main--article--specific--product--section--offer">
                     <div className="main--article--specific--product--section--offer--div">
 
+                        <aside className="aside aside--error aside--error--offer">
+                            <span className="aside--error--span">
+
+                            </span>
+                        </aside>
+
                         <div className="main--article--specific--product--section--offer--div--input--wrap">
                             <input className="main--article--specific--product--section--offer--div--input" type="number" name="main--article--specific--product--section--offer--div--input" id="main--article--specific--product--section--offer--div--input"
                             />
@@ -106,7 +167,7 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
 
                         </div>
 
-                        <button className="main--article--specific--product--section--offer--div--button" type="submit" name="main--article--specific--product--section--offer--div--button" id="main--article--specific--product--section--offer--div--button">Faire offre!</button>
+                        <button className="main--article--specific--product--section--offer--div--button" type="submit" name="main--article--specific--product--section--offer--div--button" id="main--article--specific--product--section--offer--div--button" onClick={handleSubmitOffer}>Faire offre!</button>
 
                     </div>
                     <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>

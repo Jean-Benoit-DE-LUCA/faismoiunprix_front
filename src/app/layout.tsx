@@ -11,7 +11,6 @@ import { IUserData } from './connexion/page';
 export interface Product {
   id: number;
   product_name: string;
-  /*product_price: string;*/
   product_description: string;
   product_place: string;
   product_delivery: number;
@@ -40,6 +39,7 @@ export const DataContext = createContext<DContext>({
 export const UserContext = createContext<IUserData>({
   user_mail: "",
   user_name: "",
+  user_id: NaN,
   user_jwt: "",
   setUserData: () => {}
 });
@@ -54,16 +54,17 @@ export default function RootLayout({
   const [addProductCount, setAddProductCount] = useState<number>(0);
   const [getProduct, setGetProduct] = useState<Array<any>>([]);
 
-  const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_jwt: "", setUserData: () => {}});
+  const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_id: NaN, user_jwt: "", setUserData: () => {}});
 
   const updateProductCount = (valueCount: number) => {
     setAddProductCount(addProductCount + valueCount);
   }
 
-  const updateUserData = (valueMail: string, valueName: string, valueJwt: string) => {
+  const updateUserData = (valueMail: string, valueName: string, valueId: number, valueJwt: string) => {
     setUserData({
       user_mail: valueMail,
       user_name: valueName,
+      user_id: valueId,
       user_jwt: valueJwt,
       setUserData: () => {}
     });
@@ -92,6 +93,7 @@ export default function RootLayout({
   const objUserContext: IUserData = {
     user_mail: userData.user_mail,
     user_name: userData.user_name,
+    user_id: userData.user_id,
     user_jwt: userData.user_jwt,
     setUserData: updateUserData
   };
