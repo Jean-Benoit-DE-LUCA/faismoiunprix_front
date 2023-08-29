@@ -98,7 +98,19 @@ export default function Add() {
                     asideError.classList.remove("active");
                 }, 3000);
             }
-        }
+        };
+    };
+
+    const arrayImagesNumbers: Array<any> = [
+        {id: 1, name: "Image 1"},
+        {id: 2, name: "Image 2"},
+        {id: 3, name: "Image 3"}
+    ];
+
+    const handleInputFileChange = (e: React.ChangeEvent<HTMLInputElement> | any) => {
+        
+        const nameImage = e.target.value.replace("C:\\fakepath\\", "").trim();
+        e.currentTarget.parentElement.getElementsByClassName("main--section--add--product--form--label--file--span")[0].textContent = nameImage;
     };
 
     if (userContext.user_jwt !== "") {
@@ -121,9 +133,29 @@ export default function Add() {
                         </div>
 
                         <div className="main--section--add--product--form--input--wrap">
-                            <label className="main--section--add--product--form--label--description" htmlFor="main--section--add--product--form--textarea--description">Description</label>
+                            <label className="main--section--add--product--form--label--description" htmlFor="main--section--add--product--form--textarea--description">Description
+                            </label>
                             <textarea className="main--section--add--product--form--textarea--description" name="main--section--add--product--form--textarea--description" id="main--section--add--product--form--textarea--description" placeholder="Décrivez votre produit">
                             </textarea>
+                        </div>
+
+                        <div className="main--section--add--product--form--input--wrap main--section--add--product--form--input--wrap--images">
+                            <label className="main--section--add--product--form--label--file--title">Images
+                            </label>
+
+                            {arrayImagesNumbers.map( elem => 
+                                <div key={elem.id} className="main--section--add--product--form--label--file--wrap">
+
+                                    <label className="main--section--add--product--form--label--file" htmlFor={`main--section--add--product--form--input--file--${elem.id}`}>{elem.name}
+                                    </label>
+
+                                    <span className="main--section--add--product--form--label--file--span">Choisir une image</span>
+
+                                    <input className={`main--section--add--product--form--input--file main--section--add--product--form--input--file--${elem.id}`} type="file" name={`main--section--add--product--form--input--file--${elem.id}`} id={`main--section--add--product--form--input--file--${elem.id}`} onChange={handleInputFileChange}/>
+
+                                </div>
+                            )}
+
                         </div>
 
                         <div className="main--section--add--product--form--input--wrap">

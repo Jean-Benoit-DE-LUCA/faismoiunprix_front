@@ -49,29 +49,42 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
 
         else if (userContext.user_jwt.length > 0) {
 
-            const response = await fetch("http://127.0.0.1:8000/api/insertoffer", {
-                method: "POST",
-                headers: {
-                    "Content-type": "application/json",
-                    "Authorization": `Bearer ${userContext.user_jwt}`
-                },
-                body: JSON.stringify({
-                    offer_submitted: valueOffer.value,
-                    user_id: userContext.user_id,
-                    product_id: params.product_id,
-                    offer_accepted: 0
-                })
-            });
+            if (valueOffer.value !== "") {
 
-            const data = await response.json();
-            
-            if (data.response == true) {
+                const response = await fetch("http://127.0.0.1:8000/api/insertoffer", {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json",
+                        "Authorization": `Bearer ${userContext.user_jwt}`
+                    },
+                    body: JSON.stringify({
+                        offer_submitted: valueOffer.value,
+                        user_id: userContext.user_id,
+                        product_id: params.product_id,
+                        offer_accepted: 0
+                    })
+                });
 
-                spanElementError.textContent = "Offre envoyée avec succès!";
-                asideErrorOffer.classList.add("aside--success", "active_success");
+                const data = await response.json();
+                
+                if (data.response == true) {
+
+                    spanElementError.textContent = "Offre envoyée avec succès!";
+                    asideErrorOffer.classList.add("aside--success", "active_success");
+
+                    setTimeout(() => {
+                        asideErrorOffer.classList.remove("aside--success", "active_success");
+                    }, 3000);
+                }
+            }
+
+            else {
+
+                spanElementError.textContent = "Champs vide, veuillez saisir une offre";
+                asideErrorOffer.classList.add("active");
 
                 setTimeout(() => {
-                    asideErrorOffer.classList.remove("aside--success", "active_success");
+                    asideErrorOffer.classList.remove("active");
                 }, 3000);
             }
         }
@@ -80,6 +93,8 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
     useEffect(() => {
         fetchProduct();
     }, []);
+
+    console.log(getProduct);
 
     return (
         <main className="main">
