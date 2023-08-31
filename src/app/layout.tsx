@@ -14,6 +14,7 @@ export interface Product {
   product_description: string;
   product_place: string;
   product_delivery: number;
+  product_photos: string | null
   created_at: string;
   updated_at: string;
 }

@@ -24,8 +24,21 @@ export default function Add() {
         const textareaDescriptionProduct: any = document.getElementsByClassName("main--section--add--product--form--textarea--description")[0];
         const inputPlaceProduct = document.getElementsByClassName("main--section--add--product--form--input--place")[0];
         const deliveryRadioProduct = document.getElementsByName("main--section--add--product--form--checkbox--delivery");
+        const inputImagesProduct: HTMLCollectionOf<Element> = document.getElementsByClassName("main--section--add--product--form--input--file");
     
         e.preventDefault();
+
+        const arrayImages: Array<any> = [];
+        const dataImages = new FormData();
+
+        Array.from(inputImagesProduct).forEach( (elem: any) => {
+
+            if (elem.files.length !== 0) {
+                let numImage: number = Number(elem.name.replace("main--section--add--product--form--input--file--", "").trim());
+                arrayImages.push({numImage, pathImage: `/assets/images/${elem.files[0].name}`});
+                dataImages.append(`image${numImage.toString()}`, elem.files[0]);
+            }
+        });
     
         let flag: boolean = false
         let nameClassRadioDelivery: string = "";
@@ -79,6 +92,16 @@ export default function Add() {
             const data = await response.json();
 
             if (data.response == true) {
+
+                dataImages.append("lastInsertId", data.lastInsertId);
+
+                const responseImages = await fetch(`http://127.0.0.1:8000/api/insertproductimages/folder/${data.lastInsertId}`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${userContext.user_jwt}`
+                    },
+                    body: dataImages
+                });
 
                 dataContext.setAddProductCount(1);
 
@@ -151,7 +174,7 @@ export default function Add() {
 
                                     <span className="main--section--add--product--form--label--file--span">Choisir une image</span>
 
-                                    <input className={`main--section--add--product--form--input--file main--section--add--product--form--input--file--${elem.id}`} type="file" name={`main--section--add--product--form--input--file--${elem.id}`} id={`main--section--add--product--form--input--file--${elem.id}`} onChange={handleInputFileChange}/>
+                                    <input className={`main--section--add--product--form--input--file`} type="file" name={`main--section--add--product--form--input--file--${elem.id}`} id={`main--section--add--product--form--input--file--${elem.id}`} onChange={handleInputFileChange}/>
 
                                 </div>
                             )}

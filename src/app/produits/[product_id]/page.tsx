@@ -94,7 +94,9 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
         fetchProduct();
     }, []);
 
-    console.log(getProduct);
+    if (getProduct.productFound.length > 0) {
+        console.log(getProduct.productFound[0].product_photos?.split(',').splice(1));
+    }
 
     return (
         <main className="main">
@@ -105,6 +107,7 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
             </Link>
 
             {getProduct.productFound[0] !== undefined ?
+            
             (
             <article className="main--article--specific--product">
                 <h1 className="main--article--specific--product--h1">
@@ -112,49 +115,62 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
                     <span className="main--article--specific--product--h1--span"></span>
                 </h1>
 
-                <section className="main--article--specific--product--section--images">
+                {getProduct.productFound[0].product_photos == null ?
+
+                (
+                    <section className="main--article--specific--product--section--images">
                     <div className="main--article--specific--product--section--images--div--main">
                         <Image
                             className="main--article--specific--product--section--images--div--main--img"
-                            src="/assets/images/one.jpg"
+                            src="/assets/images/no_image.png"
                             alt="main-image"
                             fill
                         />
                     </div>
+                    <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                </section>
+                ):
 
+                <section className="main--article--specific--product--section--images">
+                    <div className="main--article--specific--product--section--images--div--main">
+                        <Image
+                            className="main--article--specific--product--section--images--div--main--img"
+                            src={`http://127.0.0.1:8000/assets/images/${getProduct.productFound[0].product_photos.split(',')[0]}`}
+                            alt="main-image"
+                            fill
+                        />
+                    </div>
+                    
+                    {getProduct.productFound[0].product_photos.split(',').length >= 2 ?
+
+                    (
+                    <>
                     <div className="main--article--specific--product--section--images--div--others--wrap">
                         <div className="main--article--specific--product--section--images--div--others">
 
-                            <div className="main--article--specific--product--section--images--div--others--grid--element--img--wrap">
+                            {getProduct.productFound[0].product_photos.split(',').splice(1).map( elem => 
+                                <div className="main--article--specific--product--section--images--div--others--grid--element--img--wrap">
                                 <Image
                                     className="main--article--specific--product--section--images--div--others--grid--element--img"
-                                    src="/assets/images/two.jpg"
+                                    src={`http://127.0.0.1:8000/assets/images/${elem}`}
                                     alt="other-image"
                                     fill
                                 />
-                            </div>
+                                </div>
+                            )}
 
-                            <div className="main--article--specific--product--section--images--div--others--grid--element--img--wrap">
-                                <Image
-                                    className="main--article--specific--product--section--images--div--others--grid--element--img"
-                                    src="/assets/images/three.jpg"
-                                    alt="other-image"
-                                    fill
-                                />
-                            </div>
-
-                            <div className="main--article--specific--product--section--images--div--others--grid--element--img--wrap">
-                                <Image
-                                    className="main--article--specific--product--section--images--div--others--grid--element--img"
-                                    src="/assets/images/four.jpg"
-                                    alt="other-image"
-                                    fill
-                                />
-                            </div>
                         </div>
                     </div>
                     <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                    </>
+                    ):
+
+                    <>
+                    </>
+
+                    }
                 </section>
+                }
 
                 <section className="main--article--specific--product--section--description">
                     <div className="main--article--specific--product--section--description--div--description">
