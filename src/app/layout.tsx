@@ -40,6 +40,10 @@ export const DataContext = createContext<DContext>({
 export const UserContext = createContext<IUserData>({
   user_mail: "",
   user_name: "",
+  user_firstname: "",
+  user_address: "",
+  user_zip: NaN,
+  user_phone: "",
   user_id: NaN,
   user_jwt: "",
   setUserData: () => {}
@@ -55,16 +59,20 @@ export default function RootLayout({
   const [addProductCount, setAddProductCount] = useState<number>(0);
   const [getProduct, setGetProduct] = useState<Array<any>>([]);
 
-  const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_id: NaN, user_jwt: "", setUserData: () => {}});
+  const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_firstname: "", user_address: "", user_zip: NaN, user_phone: "", user_id: NaN, user_jwt: "", setUserData: () => {}});
 
   const updateProductCount = (valueCount: number) => {
     setAddProductCount(addProductCount + valueCount);
   }
 
-  const updateUserData = (valueMail: string, valueName: string, valueId: number, valueJwt: string) => {
+  const updateUserData = (valueMail: string, valueName: string, valueFirstName: string, valueAddress: string, valueZip: number, valuePhone: string, valueId: number, valueJwt: string) => {
     setUserData({
       user_mail: valueMail,
       user_name: valueName,
+      user_firstname: valueFirstName,
+      user_address: valueAddress,
+      user_zip: valueZip,
+      user_phone: valuePhone,
       user_id: valueId,
       user_jwt: valueJwt,
       setUserData: () => {}
@@ -94,6 +102,10 @@ export default function RootLayout({
   const objUserContext: IUserData = {
     user_mail: userData.user_mail,
     user_name: userData.user_name,
+    user_firstname: userData.user_firstname,
+    user_address: userData.user_address,
+    user_zip: userData.user_zip,
+    user_phone: userData.user_phone,
     user_id: userData.user_id,
     user_jwt: userData.user_jwt,
     setUserData: updateUserData

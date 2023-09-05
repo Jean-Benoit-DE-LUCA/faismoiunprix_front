@@ -14,6 +14,10 @@ import { DataContext, UserContext } from "../layout";
 export interface IUserData {
     user_mail: string;
     user_name: string;
+    user_firstname: string;
+    user_address: string;
+    user_zip: number;
+    user_phone: string;
     user_id: number;
     user_jwt: string;
     setUserData: any
@@ -69,9 +73,9 @@ export default function Connection(): ReactElement {
         const spanMessage: Element = asideError.getElementsByClassName("aside--error--span")[0];
 
         const data = await response.json();
-        
+
         if (data.hasOwnProperty("jwt")) {
-            userContext.setUserData(user_mail, data.user_name, data.user_id, data.jwt);
+            userContext.setUserData(user_mail, data.user_name, data.user_firstname, data.user_address, data.user_zip, data.user_phone, data.user_id, data.jwt);
             spanMessage.textContent = "Authentification réalisée avec succès";
             asideError.classList.add("aside--success", "active_success");
 
@@ -128,12 +132,16 @@ export default function Connection(): ReactElement {
 
                     <div className="main--section--login--connection--form--password--wrap">
                         <label className="main--section--login--connection--form--label--password" htmlFor="main--section--login--connection--form--input--password">Mot de passe:</label>
-                        <input className="main--section--login--connection--form--input--password" name="main--section--login--connection--form--input--password" id="main--section--login--connection--form--input--password"/>
+                        <input className="main--section--login--connection--form--input--password" name="main--section--login--connection--form--input--password" id="main--section--login--connection--form--input--password" type="password"/>
                     </div>
 
                     <button className="main--section--login--connection--form--submit" type="submit" name="main--section--login--connection--form--submit" id="main--section--login--connection--form--submit">Valider</button>
 
                 </form>
+
+                <Link className="main--section--signup--login--anchor" href="/inscription">
+                    <button className="main--section--signup--connection--button" type="button" name="main--section--signup--connection--button" id="main--section--signup--connection--button">S'inscrire</button>
+                </Link>
             </section>
         </main>
     );

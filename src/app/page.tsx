@@ -36,7 +36,7 @@ export default function App(): ReactElement {
   }
 
   const handleLogout = (): void => {
-    userContext.setUserData("", "", "", "");
+    userContext.setUserData("", "", "", "", "", "", "", "");
   };
 
   const errorAuthFunc = () => {
@@ -73,7 +73,15 @@ export default function App(): ReactElement {
       {userContext.user_jwt !== "" ? 
       (
         <>
-        <p className="main--p">Bienvenue {userContext.user_name}!</p>
+        <p className="main--p">Bienvenue {userContext.user_firstname}!</p>
+        
+        <section className="main--section--myproducts--myoffers--div">
+          <Link className="main--section--myproducts--myoffers--div--myproducts" href="/mesproduits">Mes produits</Link>
+          <Link className="main--section--myproducts--myoffers--div--myoffers" href="/mesoffres">Mes offres</Link>
+
+          <span className="main--article--specific--product--h1--span main--article--specific--product--section--span home--line--span"></span>
+        </section>
+
         <section className="main--section--signup--login">
           <Link className="main--section--signup--login--anchor" href="" onClick={handleLogout}>Se déconnecter</Link>
           <span className="main--section--add--product--span">OU</span>

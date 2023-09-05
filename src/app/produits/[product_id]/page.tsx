@@ -21,12 +21,20 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
 
     const [getProduct, setGetProduct] = useState<ISpecificProduct>({productFound: []});
 
+    const [imagesNamesProduct, setImagesNamesProduct] = useState<Array<string|undefined>>([]);
+    const [imageName, setImageName] = useState<string|null>("");
+
     const fetchProduct = async () => {
 
         const response = await fetch(`http://127.0.0.1:8000/api/getproducts/${params.product_id}`)
         const data = await response.json();
         dataContext.setProduct(data);
         setGetProduct(data);
+
+        if (data.productFound[0].product_photos !== null) {
+            setImagesNamesProduct(data.productFound[0].product_photos.split(','));
+            setImageName(data.productFound[0].product_photos.split(',')[0]);
+        }
     };
 
     const handleSubmitOffer = async (e: React.MouseEvent) => {
@@ -90,13 +98,19 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
         }
     };
 
+    const handleClickDivOtherImage = (e: React.FormEvent<EventTarget>) => {
+
+        const anchorMainImage = (document.getElementsByClassName("main--article--specific--product--section--images--div--main--anchor")[0] as HTMLAnchorElement);
+        
+        setImageName((e.currentTarget as HTMLImageElement).getElementsByTagName("img")[0].getAttribute("data-img"));
+
+        (e.currentTarget as HTMLImageElement).getElementsByTagName("img")[0].src = anchorMainImage.href;
+        (e.currentTarget as HTMLImageElement).getElementsByTagName("img")[0].setAttribute("data-img", anchorMainImage.href.replace("http://127.0.0.1:8000/assets/images/", ""));
+    }
+
     useEffect(() => {
         fetchProduct();
     }, []);
-
-    if (getProduct.productFound.length > 0) {
-        console.log(getProduct.productFound[0].product_photos?.split(',').splice(1));
-    }
 
     return (
         <main className="main">
@@ -125,6 +139,8 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
                             src="/assets/images/no_image.png"
                             alt="main-image"
                             fill
+                            priority={true}
+                            sizes="50px"
                         />
                     </div>
                     <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
@@ -133,12 +149,17 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
 
                 <section className="main--article--specific--product--section--images">
                     <div className="main--article--specific--product--section--images--div--main">
+                        <a className="main--article--specific--product--section--images--div--main--anchor" href={`http://127.0.0.1:8000/assets/images/${imageName}`}>
                         <Image
                             className="main--article--specific--product--section--images--div--main--img"
-                            src={`http://127.0.0.1:8000/assets/images/${getProduct.productFound[0].product_photos.split(',')[0]}`}
+                            src={`http://127.0.0.1:8000/assets/images/${imageName}`}
+                            unoptimized={true}
                             alt="main-image"
                             fill
+                            priority={true}
+                            sizes="50px"
                         />
+                        </a>
                     </div>
                     
                     {getProduct.productFound[0].product_photos.split(',').length >= 2 ?
@@ -148,15 +169,24 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
                     <div className="main--article--specific--product--section--images--div--others--wrap">
                         <div className="main--article--specific--product--section--images--div--others">
 
-                            {getProduct.productFound[0].product_photos.split(',').splice(1).map( elem => 
-                                <div className="main--article--specific--product--section--images--div--others--grid--element--img--wrap">
+                            {imagesNamesProduct.slice(1).map( elem => 
+                                
+                                <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap" 
+                                onClick={handleClickDivOtherImage}>
+
                                 <Image
                                     className="main--article--specific--product--section--images--div--others--grid--element--img"
                                     src={`http://127.0.0.1:8000/assets/images/${elem}`}
+                                    unoptimized={true}
+                                    data-img={elem}
                                     alt="other-image"
                                     fill
+                                    priority={true}
+                                    sizes="50px"
                                 />
+
                                 </div>
+
                             )}
 
                         </div>
