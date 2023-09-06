@@ -19,6 +19,7 @@ export interface IUserData {
     user_zip: number;
     user_phone: string;
     user_id: number;
+    user_role: string;
     user_jwt: string;
     setUserData: any
 }

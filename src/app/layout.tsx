@@ -2,7 +2,7 @@
 
 import './style.css';
 
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect} from 'react';
 
 import Header from '../../components/Header/page';
 
@@ -45,6 +45,7 @@ export const UserContext = createContext<IUserData>({
   user_zip: NaN,
   user_phone: "",
   user_id: NaN,
+  user_role: "",
   user_jwt: "",
   setUserData: () => {}
 });
@@ -59,13 +60,13 @@ export default function RootLayout({
   const [addProductCount, setAddProductCount] = useState<number>(0);
   const [getProduct, setGetProduct] = useState<Array<any>>([]);
 
-  const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_firstname: "", user_address: "", user_zip: NaN, user_phone: "", user_id: NaN, user_jwt: "", setUserData: () => {}});
+  const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_firstname: "", user_address: "", user_zip: NaN, user_phone: "", user_id: NaN, user_role: "", user_jwt: "", setUserData: () => {}});
 
   const updateProductCount = (valueCount: number) => {
     setAddProductCount(addProductCount + valueCount);
   }
 
-  const updateUserData = (valueMail: string, valueName: string, valueFirstName: string, valueAddress: string, valueZip: number, valuePhone: string, valueId: number, valueJwt: string) => {
+  const updateUserData = (valueMail: string, valueName: string, valueFirstName: string, valueAddress: string, valueZip: number, valuePhone: string, valueId: number, valueRole: string, valueJwt: string) => {
     setUserData({
       user_mail: valueMail,
       user_name: valueName,
@@ -74,6 +75,7 @@ export default function RootLayout({
       user_zip: valueZip,
       user_phone: valuePhone,
       user_id: valueId,
+      user_role: valueRole,
       user_jwt: valueJwt,
       setUserData: () => {}
     });
@@ -107,6 +109,7 @@ export default function RootLayout({
     user_zip: userData.user_zip,
     user_phone: userData.user_phone,
     user_id: userData.user_id,
+    user_role: userData.user_role,
     user_jwt: userData.user_jwt,
     setUserData: updateUserData
   };

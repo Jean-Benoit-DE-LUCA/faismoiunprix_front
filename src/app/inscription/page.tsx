@@ -4,9 +4,17 @@ import Link from "next/link";
 import Image from "next/image";
 
 import arrowLeft from "../../../public/assets/images/arrow-left.svg";
-import { SyntheticEvent } from "react";
+
+import { SyntheticEvent, useContext } from "react";
+
+import { useRouter } from "next/navigation";
+
+import { UserContext } from "../layout";
 
 export default function Signup() {
+
+    const Router = useRouter();
+    const userContext = useContext(UserContext);
 
     const handleSubmitSignUp = async (e: SyntheticEvent) => {
         e.preventDefault();
@@ -75,10 +83,16 @@ export default function Signup() {
 
                 spanMessage.textContent = data.message;
                 asideError.classList.add("active");
+
+                userContext.setUserData(data.user[0].user_mail, data.user[0].user_name, data.user[0].user_firstname, data.user[0].user_address, data.user[0].user_zip, data.user[0].user_phone, data.user[0].id, data.user[0].user_role, data.jwt);
     
                 setTimeout(() => {
                     asideError.classList.remove("active");
                 }, 2000);
+
+                setTimeout(() => {
+                    Router.push("/");
+                }, 2200);
             }
 
             else if (data.flag == false) {
