@@ -76,7 +76,7 @@ export default function Connection(): ReactElement {
         const data = await response.json();
 
         if (data.hasOwnProperty("jwt")) {
-            userContext.setUserData(user_mail, data.user_name, data.user_firstname, data.user_address, data.user_zip, data.user_phone, data.user_id, data.jwt);
+            userContext.setUserData(user_mail, data.user_name, data.user_firstname, data.user_address, data.user_zip, data.user_phone, data.user_id, data.user_role, data.jwt);
             spanMessage.textContent = "Authentification réalisée avec succès";
             asideError.classList.add("aside--success", "active_success");
 
@@ -109,10 +109,10 @@ export default function Connection(): ReactElement {
     return (
         <main className="main">
 
-            <Link className="main--anchor--back" href="/">
-                <Image className="main--anchor--back--img" src={arrowLeft} alt="arrow-left-image"/>
-                <span className="main--anchor--back--span">Retour</span>
-            </Link>
+            <button className="main--button--back" onClick={() => {Router.back()}}>
+                <Image className="main--button--back--img" src={arrowLeft} alt="arrow-left-image"/>
+                <span className="main--button--back--span">Retour</span>
+            </button>
 
             <aside className="aside aside--error">
                 <span className="aside--error--span">

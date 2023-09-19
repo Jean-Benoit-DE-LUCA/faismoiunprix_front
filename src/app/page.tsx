@@ -15,10 +15,6 @@ export default function App(): ReactElement {
     value: string,
   }
 
-  /*interface IProduct {
-    products: Array<string|number|boolean>
-  }*/
-
   const dataContext = useContext(DataContext);
   const userContext = useContext(UserContext);
 
@@ -36,7 +32,7 @@ export default function App(): ReactElement {
   }
 
   const handleLogout = (): void => {
-    userContext.setUserData("", "", "", "", "", "", "", "");
+    userContext.setUserData("", "", "", "", "", "", "", "", "");
   };
 
   const errorAuthFunc = () => {
@@ -76,7 +72,7 @@ export default function App(): ReactElement {
         <p className="main--p">Bienvenue {userContext.user_firstname}!</p>
         
         <section className="main--section--myproducts--myoffers--div">
-          <Link className="main--section--myproducts--myoffers--div--myproducts" href="/mesproduits">Mes produits</Link>
+          <Link className="main--section--myproducts--myoffers--div--myproducts" href="/produits/mesproduits">Mes produits</Link>
           <Link className="main--section--myproducts--myoffers--div--myoffers" href="/mesoffres">Mes offres</Link>
 
           <span className="main--article--specific--product--h1--span main--article--specific--product--section--span home--line--span"></span>

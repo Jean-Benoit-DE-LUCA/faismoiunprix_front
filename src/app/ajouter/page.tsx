@@ -13,7 +13,7 @@ import { UserContext, DataContext } from "../layout";
 
 export default function Add() {
 
-    const router = useRouter();
+    const Router = useRouter();
 
     const userContext = useContext(UserContext);
     const dataContext = useContext(DataContext);
@@ -74,6 +74,7 @@ export default function Add() {
             }, 3000);
     
             const radioValueChecked = (document.getElementsByClassName(nameClassRadioDelivery)[0] as HTMLInputElement);
+            console.log(userContext);
 
             const response = await fetch("http://127.0.0.1:8000/api/insertproduct", {
                 method: "POST",
@@ -86,10 +87,12 @@ export default function Add() {
                     description_product: textareaDescriptionProduct.value,
                     place_product: (inputPlaceProduct as HTMLInputElement).value,
                     delivery_product: radioValueChecked.value.replace("main--section--add--product--form--input--delivery--", ""),
+                    user_id: userContext.user_id
                 })
             });
             
             const data = await response.json();
+            console.log(data);
 
             if (data.response == true) {
 
@@ -106,7 +109,7 @@ export default function Add() {
                 dataContext.setAddProductCount(1);
 
                 setTimeout(() => {
-                    router.push("/");
+                    Router.push("/");
                 }, 3000);
             }
 
@@ -140,10 +143,10 @@ export default function Add() {
         return (
             <main className="main">
 
-                <Link className="main--anchor--back" href="/">
-                    <Image className="main--anchor--back--img" src={arrowLeft} alt="arrow-left-image"/>
-                    <span className="main--anchor--back--span">Retour</span>
-                </Link>
+            <button className="main--button--back" onClick={() => {Router.back()}}>
+                <Image className="main--button--back--img" src={arrowLeft} alt="arrow-left-image"/>
+                <span className="main--button--back--span">Retour</span>
+            </button>
                 
                 <section className="main--section--add--product main--section--add--product--add--page">
                     <h2 className="main--section--add--product--h2">Ajouter un produit</h2>

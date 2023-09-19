@@ -110,10 +110,10 @@ export default function Signup() {
     return (
         <main className="main">
 
-        <Link className="main--anchor--back" href="/">
-            <Image className="main--anchor--back--img" src={arrowLeft} alt="arrow-left-image"/>
-            <span className="main--anchor--back--span">Retour</span>
-        </Link>
+            <button className="main--button--back" onClick={() => {Router.back()}}>
+                <Image className="main--button--back--img" src={arrowLeft} alt="arrow-left-image"/>
+                <span className="main--button--back--span">Retour</span>
+            </button>
 
         <aside className="aside aside--error aside--translate">
             <span className="aside--error--span">

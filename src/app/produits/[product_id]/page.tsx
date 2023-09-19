@@ -4,6 +4,7 @@ import arrowLeft from "../../../../public/assets/images/arrow-left.svg";
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { DataContext, UserContext } from "@/app/layout";
 import { useEffect, useContext, useState } from "react"
@@ -15,6 +16,8 @@ export interface ISpecificProduct {
 };
 
 export default function ProductId({ params }: { params: {product_id: string}}) {
+
+    const Router = useRouter();
 
     const dataContext = useContext(DataContext);
     const userContext = useContext(UserContext);
@@ -115,10 +118,10 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
     return (
         <main className="main">
 
-            <Link className="main--anchor--back" href="/">
-                <Image className="main--anchor--back--img" src={arrowLeft} alt="arrow-left-image"/>
-                <span className="main--anchor--back--span">Retour</span>
-            </Link>
+            <button className="main--button--back" onClick={() => {Router.back()}}>
+                <Image className="main--button--back--img" src={arrowLeft} alt="arrow-left-image"/>
+                <span className="main--button--back--span">Retour</span>
+            </button>
 
             {getProduct.productFound[0] !== undefined ?
             
@@ -149,7 +152,7 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
 
                 <section className="main--article--specific--product--section--images">
                     <div className="main--article--specific--product--section--images--div--main">
-                        <a className="main--article--specific--product--section--images--div--main--anchor" href={`http://127.0.0.1:8000/assets/images/${imageName}`}>
+                        <a className="main--article--specific--product--section--images--div--main--anchor" href={`http://127.0.0.1:8000/assets/images/${imageName}`} target="_blank">
                         <Image
                             className="main--article--specific--product--section--images--div--main--img"
                             src={`http://127.0.0.1:8000/assets/images/${imageName}`}
@@ -211,28 +214,38 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
                     <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
                 </section>
 
-                <section className="main--article--specific--product--section--offer">
-                    <div className="main--article--specific--product--section--offer--div">
+                {getProduct.productFound[0].user_id !== userContext.user_id ?
+                
+                    (
 
-                        <aside className="aside aside--error aside--error--offer">
-                            <span className="aside--error--span">
+                        <section className="main--article--specific--product--section--offer">
+                            <div className="main--article--specific--product--section--offer--div">
 
-                            </span>
-                        </aside>
+                                <aside className="aside aside--error aside--error--offer">
+                                    <span className="aside--error--span">
 
-                        <div className="main--article--specific--product--section--offer--div--input--wrap">
-                            <input className="main--article--specific--product--section--offer--div--input" type="number" name="main--article--specific--product--section--offer--div--input" id="main--article--specific--product--section--offer--div--input"
-                            />
+                                    </span>
+                                </aside>
 
-                            <span className="main--article--specific--product--section--offer--div--input--span">€</span>
+                                <div className="main--article--specific--product--section--offer--div--input--wrap">
+                                    <input className="main--article--specific--product--section--offer--div--input" type="number" name="main--article--specific--product--section--offer--div--input" id="main--article--specific--product--section--offer--div--input"
+                                    />
 
-                        </div>
+                                    <span className="main--article--specific--product--section--offer--div--input--span">€</span>
 
-                        <button className="main--article--specific--product--section--offer--div--button" type="submit" name="main--article--specific--product--section--offer--div--button" id="main--article--specific--product--section--offer--div--button" onClick={handleSubmitOffer}>Faire offre!</button>
+                                </div>
 
-                    </div>
-                    <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
-                </section>
+                                <button className="main--article--specific--product--section--offer--div--button" type="submit" name="main--article--specific--product--section--offer--div--button" id="main--article--specific--product--section--offer--div--button" onClick={handleSubmitOffer}>Faire offre!</button>
+
+                            </div>
+                            <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                        </section>
+
+                    ) : 
+
+                    <>
+                    </>
+                }
 
 
             </article>
