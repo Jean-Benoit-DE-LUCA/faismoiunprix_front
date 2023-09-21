@@ -123,7 +123,7 @@ export default function MyOffers() {
                     {getOffers.map( (elem, ind) => 
                         
                         <Link key={ind} className="main--section--myoffers--display--ul--a" href={`/mesoffres/${elem.offerId}`}>
-                        <li className="main--section--myproducts--display--ul--li main--section--myoffers--display--ul--li">
+                        <li className={elem.hasOwnProperty("offer_accepted") && elem.offer_accepted == 1 ? "main--section--myproducts--display--ul--li main--section--myoffers--display--ul--li active--accepted" : "main--section--myproducts--display--ul--li main--section--myoffers--display--ul--li"}>
 
                             <span className="main--section--myproducts--display--ul--li--span">
                                 {elem.product_name}

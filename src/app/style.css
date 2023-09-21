@@ -479,6 +479,16 @@ body {
     visibility: visible;
 }
 
+.main--article--section--offer--received--confirm--div.active .main--article--section--offer--received--confirm--div--yes--no--span--yes {
+    opacity: 1;
+    visibility: visible;
+}
+
+.main--article--section--offer--received--confirm--div.active .main--article--section--offer--received--confirm--div--yes--no--span--no {
+    opacity: 1;
+    visibility: visible;
+}
+
 .main--article--section--offer--received--confirm--div.active.active_success {
     background-color: #96e079;
 }
@@ -493,6 +503,16 @@ body {
 }
 
 .main--article--section--offer--received--confirm--div--yes--no.active {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.main--article--section--offer--received--confirm--div--yes--no--span--yes {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.main--article--section--offer--received--confirm--div--yes--no--span--no {
     opacity: 0;
     visibility: hidden;
 }
@@ -838,6 +858,10 @@ body {
 .main--section--myoffers--display--ul--a {
     text-decoration: none;
     color: var(--borderCol);
+}
+
+.main--section--myoffers--display--ul--li.active--accepted {
+    background-color: #96e079;
 }
 
 .main--section--myoffers--display--ul--li--span--offer {
