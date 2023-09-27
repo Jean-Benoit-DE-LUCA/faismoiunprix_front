@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -16,6 +16,7 @@ export default function MyOffers() {
     const userContext = useContext(UserContext);
 
     const [getOffers, setOffers] = useState<Array<any>>([]);
+    const [getOffersCopy, setOffersCopy] = useState<Array<any>>([]);
 
     console.log(userContext);
 
@@ -41,6 +42,7 @@ export default function MyOffers() {
         if (responseData.flag == true) {
 
             setOffers(responseData.getOffersSent);
+            setOffersCopy(responseData.getOffersSent);
         }
     };
 
@@ -67,6 +69,7 @@ export default function MyOffers() {
         if (responseData.flag == true) {
 
             setOffers(responseData.getOffersReceived);
+            setOffersCopy(responseData.getOffersReceived);
         }
 
         /*const response = await fetch(`http://127.0.0.1:8000/api/getuserofferssent/${userContext.user_id}`, {
@@ -84,6 +87,38 @@ export default function MyOffers() {
             setOffers(responseData.getOffersSent);
         }*/
     }
+
+    const handleChangeOptionFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+        
+        if (e.target.value == "-") {
+
+            setOffers(getOffersCopy);
+        }
+
+        else if (e.target.value == "accepted") {
+
+            const filteredAccepted = getOffersCopy.filter( elem => elem.offer_accepted == 1);
+            setOffers(filteredAccepted);
+        }
+
+        else if (e.target.value == "refused") {
+
+            const filteredRefused = getOffersCopy.filter( elem => elem.offer_accepted == -1);
+            setOffers(filteredRefused);
+        }
+
+        else if (e.target.value == "in-progress") {
+
+            const filteredInProgress= getOffersCopy.filter( elem => elem.offer_accepted == 0);
+            setOffers(filteredInProgress);
+        }
+
+        else if (e.target.value == "negotiate") {
+
+            const filteredNegotiate = getOffersCopy.filter( elem => elem.offer_accepted == 2);
+            setOffers(filteredNegotiate);
+        }
+    };
 
     useEffect(() => {
         const receivedButton = (document.getElementsByClassName("main--section--myoffers--display--first--div--anchor--received")[0] as HTMLButtonElement);
@@ -118,12 +153,35 @@ export default function MyOffers() {
 
                 </div>
 
+                <section className="main--section--myoffers--display--section--filters">
+
+                    <label htmlFor="main--section--myoffers--display--section--filters--select" className="main--section--myoffers--display--section--filters--label">Filtres: </label>
+
+                    <select name="main--section--myoffers--display--section--filters--select" id="main--section--myoffers--display--section--filters--select" className="main--section--myoffers--display--section--filters--select" onChange={handleChangeOptionFilter}>
+                        <option value="-">Toutes</option>
+                        <option value="accepted">Acceptées</option>
+                        <option value="refused">Refusées</option>
+                        <option value="in-progress">En cours</option>
+                        <option value="negotiate">En négociation</option>
+                    </select>
+
+                </section>
+
                 <ul className="main--section--myoffers--display--ul">
 
                     {getOffers.map( (elem, ind) => 
                         
                         <Link key={ind} className="main--section--myoffers--display--ul--a" href={`/mesoffres/${elem.offerId}`}>
-                        <li className={elem.hasOwnProperty("offer_accepted") && elem.offer_accepted == 1 ? "main--section--myproducts--display--ul--li main--section--myoffers--display--ul--li active--accepted" : "main--section--myproducts--display--ul--li main--section--myoffers--display--ul--li"}>
+                        <li className={elem.hasOwnProperty("offer_accepted") && elem.offer_accepted == 1 ? 
+                        "main--section--myproducts--display--ul--li main--section--myoffers--display--ul--li active--accepted" : 
+
+                        elem.hasOwnProperty("offer_accepted") && elem.offer_accepted == 2 ? 
+                        "main--section--myproducts--display--ul--li main--section--myoffers--display--ul--li active--negotiate" :
+
+                        elem.hasOwnProperty("offer_accepted") && elem.offer_accepted == -1 ?
+                        "main--section--myproducts--display--ul--li main--section--myoffers--display--ul--li active--refused" :
+                        
+                        "main--section--myproducts--display--ul--li main--section--myoffers--display--ul--li"}>
 
                             <span className="main--section--myproducts--display--ul--li--span">
                                 {elem.product_name}

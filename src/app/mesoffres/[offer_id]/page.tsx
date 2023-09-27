@@ -24,6 +24,9 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
     const [imagesNamesProduct, setImagesNamesProduct] = useState<Array<string|undefined>>([]);
     const [imageName, setImageName] = useState<string|null>("");
 
+    const [getFlagYesNo, setFlagYesNo] = useState<string>("");
+    const [getInputNegotiateValue, setInputNegotiateValue] = useState<string>("");
+
     const fetchOffer = async () => {
         const response = await fetch(`http://127.0.0.1:8000/api/getoffer/${params.offer_id}`, {
             method: "GET",
@@ -58,7 +61,7 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
         noRadioInput.click();
     };
 
-    const handleSubmitAcceptNegotiateOffer = (e: React.FormEvent<EventTarget>) => {
+    const handleSubmitAcceptNegotiateOffer = (e: React.FormEvent<EventTarget>, userOffer: string, userPrice: string) => {
 
         e.preventDefault();
         
@@ -67,36 +70,46 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
         const divConfirm = (document.getElementsByClassName("main--article--section--offer--received--confirm--div")[0] as Element);
         const questionSpan = (document.getElementsByClassName("main--article--section--offer--received--confirm--div--span")[0] as Element);
 
-        let flagYesNo: string;
+        const inputNegotiate = (document.getElementsByClassName("main--article--section--offer--received--accept--div--negotiate--div--input")[0] as HTMLInputElement);
+
+        let flagYesNo: string = "";
 
         Array.from(yesNoInputRadio).forEach( (elem) => {
             
             if (elem.checked && elem.value == "yes") {
                 
-                questionSpan.textContent = `Vous acceptez l'offre de ${getOffer[0].userFirstName} ?`;
+                questionSpan.textContent = `Vous acceptez l'offre de ${userOffer} de ${userPrice}€ ?`;
                 divConfirm.classList.add("active");
                 flagYesNo = "yes";
+
             }
 
             else if (elem.checked && elem.value == "no") {
 
-                questionSpan.textContent = `Refuser l'offre de ${getOffer[0].userFirstName} ?`;
-                divConfirm.classList.add("active");
-                flagYesNo = "no";
+                if (inputNegotiate.value.length > 0) {
+
+                    questionSpan.textContent = `Proposer un prix de ${inputNegotiate.value}€ à ${userOffer} ?`;
+                    divConfirm.classList.add("active");
+                    flagYesNo = "negotiate";
+
+                }
+
+                else if (inputNegotiate.value.length == 0) {
+
+                    questionSpan.textContent = `Refuser l'offre de ${userOffer} ?`;
+                    divConfirm.classList.add("active");
+                    flagYesNo = "no";
+
+                }
             }
         });
 
-        const spanYesConfirm = (document.getElementsByClassName("main--article--section--offer--received--confirm--div--yes--no--span--yes")[0] as Element);
-        
-        spanYesConfirm.addEventListener("click", () => handleClickYesConfirm(e, flagYesNo));
-
-        const spanNoConfirm = (document.getElementsByClassName("main--article--section--offer--received--confirm--div--yes--no--span--no")[0] as Element);
-
-        spanNoConfirm.addEventListener("click", handleClickNoConfirm);
+        setFlagYesNo(flagYesNo);
+        setInputNegotiateValue(inputNegotiate.value);
 
     };
 
-    const handleClickYesConfirm = async (e: MouseEventInit, flagYesNo: string) => {
+    const handleClickYesConfirm = async (e: FormEvent<HTMLSpanElement>, flagYesNo: string, negotiate_price: string = "") => {
 
         const divYesNo = (document.getElementsByClassName("main--article--section--offer--received--confirm--div--yes--no")[0] as Element);
         const questionSpan = (document.getElementsByClassName("main--article--section--offer--received--confirm--div--span")[0] as Element);
@@ -104,7 +117,6 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
 
         if (flagYesNo == "yes") {
 
-            
             divYesNo.classList.add("active");
            
             questionSpan.textContent = "Offre acceptée!"
@@ -162,16 +174,57 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
             const responseData = await response.json();
             console.log(responseData);
 
-            setTimeout(() => {
-                divConfirm.classList.remove("active", "active_success");
-                setCountUpdateOffer(countUpdateOffer + 1);
-            }, 2000);
+            if (responseData.flag == true) {
+
+                dataContext.setAddProductCount(1);
+
+                setTimeout(() => {
+                    divConfirm.classList.remove("active", "active_success");
+                    setCountUpdateOffer(countUpdateOffer + 1);
+                }, 2000);
+            }
+        }
+
+        else if (flagYesNo == "negotiate") {
+
+            divYesNo.classList.add("active");
+           
+            questionSpan.textContent = "Offre négociée!"
+
+            divConfirm.classList.add("active_success");
+
+            const response = await fetch("http://127.0.0.1:8000/api/updateproductofferofferaccepted", {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                    "Authorization" : `Bearer ${userContext.user_jwt}`
+                },
+                body: JSON.stringify({
+                    product_id: getOffer[0].offerProductId,
+                    offer_id: getOffer[0].offerId,
+                    offer_accepted: 2,
+                    negotiate_price: negotiate_price,
+                    user_id: userContext.user_id
+                })
+            });
+
+            const responseData = await response.json();
+            console.log(responseData);
+
+            if (responseData.flag == true) {
+
+                dataContext.setAddProductCount(1);
+
+                setTimeout(() => {
+                    divConfirm.classList.remove("active", "active_success");
+                    setCountUpdateOffer(countUpdateOffer + 1);
+                }, 2000);
+            }
         }
     };
 
-    const handleClickNoConfirm = (e: Event) => {
+    const handleClickNoConfirm = (e: FormEvent<HTMLSpanElement>) => {
 
-        console.log(e.currentTarget);
         const divConfirm: Element = document.getElementsByClassName("main--article--section--offer--received--confirm--div")[0];
         divConfirm.classList.remove("active");
     };
@@ -425,8 +478,11 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
                                     <div className="main--article--section--offer--received--confirm--div">
                                         <span className="main--article--section--offer--received--confirm--div--span">Êtes-vous sûr ?</span>
                                         <div className="main--article--section--offer--received--confirm--div--yes--no">
-                                            <span className="main--article--section--offer--received--confirm--div--yes--no--span--yes">OUI</span>
-                                            <span className="main--article--section--offer--received--confirm--div--yes--no--span--no">NON</span>
+
+                                            <span className="main--article--section--offer--received--confirm--div--yes--no--span--yes" onClick={(e) => handleClickYesConfirm(e, getFlagYesNo, getInputNegotiateValue)}>OUI</span>
+
+                                            <span className="main--article--section--offer--received--confirm--div--yes--no--span--no" onClick={(e) => handleClickNoConfirm(e)}>NON</span>
+
                                         </div>
                                     </div>
 
@@ -443,7 +499,7 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
                                             {getOffer[0].offer_submitted}€
                                         </span>
 
-                                        <form className="main--article--section--offer--received--form--accept--negotiate" name="main--article--section--offer--received--form--accept--negotiate" onSubmit={handleSubmitAcceptNegotiateOffer}>
+                                        <form className="main--article--section--offer--received--form--accept--negotiate" name="main--article--section--offer--received--form--accept--negotiate" onSubmit={(e) => handleSubmitAcceptNegotiateOffer(e, getOffer[0].userFirstName, getOffer[0].offer_submitted)}>
 
                                             <div className="main--article--section--offer--received--accept--div">
 
@@ -475,7 +531,7 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
                                                     Négocier ?
                                                 </span> 
 
-                                                <input className="main--article--section--offer--received--accept--div--negotiate--div--input" type="number" name="main--article--section--offer--received--accept--div--negotiate--div--input" id="main--article--section--offer--received--accept--div--negotiate--div--input" onFocus={handleFocusInputNegotiate}/>
+                                                <input className="main--article--section--offer--received--accept--div--negotiate--div--input" type="number" step="0.01" name="main--article--section--offer--received--accept--div--negotiate--div--input" id="main--article--section--offer--received--accept--div--negotiate--div--input" onFocus={handleFocusInputNegotiate}/>
 
                                             </div>
 
@@ -513,64 +569,159 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
                                         <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
                                     </section>
 
-                                ) :
+                                ) : getOffer[0] !== undefined && getOffer[0].offer_accepted == 2 ?
 
-                                    <section className="main--article--section--offer--received--accepted">
-                                            
-                                            
-                                    <div className="main--article--section--offer--received--accepted--contact--div">
-
-
-                                        <form className="main--article--section--offer--received--accepted--contact--div--form" name="main--article--section--offer--received--accepted--contact--div--form" onSubmit={handleSendMessageContact}>
-
-                                            <div className="main--article--section--offer--received--accepted--contact--div--h3--wrap">
-                                                <h3 className="main--article--section--offer--received--accepted--contact--div--h3">
-                                                    Discussion
-                                                </h3>
-                                                <span className="cross--span" onClick={handleCloseContactDiv}>x</span>
-                                            </div>
-
-                                            <div className="main--article--section--offer--received--accepted--chat--div">
-
-                                                <div className="main--article--section--offer--received--accepted--chat--div--span--message--wrap">
-                                                    {/* offer messages */}
-                                                </div>
-
-                                            </div>
-
-                                            <input type="text" className="main--article--section--offer--received--accepted--contact--div--input" id="main--article--section--offer--received--accepted--contact--div--input" name="main--article--section--offer--received--accepted--contact--div--input"/>
-
-                                            <button type="submit" className="main--article--section--offer--received--accepted--contact--div--button" id="main--article--section--offer--received--accepted--contact--div--button" name="main--article--section--offer--received--accepted--contact--div--button">Envoyer</button>
-
-                                        </form>
-
-                                    </div>
-                                    
-                                    {getOffer[0] !== undefined && getOffer[0].productUserId == userContext.user_id ?
-                                    
                                     (
-                                        <>
-                                        <span className="main--article--section--offer--received--accepted--span">
-                                            Offre de {getOffer[0] !== undefined  && getOffer[0].userFirstName !== undefined ? getOffer[0].userFirstName : ""} d'un montant de {getOffer[0] !== undefined  && getOffer[0].offer_submitted !== undefined ? getOffer[0].offer_submitted : ""}€ acceptée
-                                        </span>
 
-                                        <button type="button" className="main--article--section--offer--received--accepted--button" name="main--article--section--offer--received--accepted--button" onClick={handleClickContactUser}>Contacter {getOffer[0] !== undefined  && getOffer[0].userFirstName !== undefined ? getOffer[0].userFirstName : ""}</button>
-                                        </>
+                                        <section className="main--article--section--offer--received">
+
+                                            <div className="main--article--section--offer--received--confirm--div">
+                                                <span className="main--article--section--offer--received--confirm--div--span">Êtes-vous sûr ?</span>
+                                                <div className="main--article--section--offer--received--confirm--div--yes--no">
+
+                                                    <span className="main--article--section--offer--received--confirm--div--yes--no--span--yes" onClick={(e) => handleClickYesConfirm(e, getFlagYesNo, getInputNegotiateValue)}>OUI</span>
+
+                                                    <span className="main--article--section--offer--received--confirm--div--yes--no--span--no" onClick={(e) => handleClickNoConfirm(e)}>NON</span>
+
+                                                </div>
+                                            </div>
+
+                                            {getOffer[0] !== undefined && /*getOffer[0].productUserId*/getOffer[0].offerNegotiateUserId !== userContext.user_id ?
+
+                                            (
+                                                <>
+                                                <span className="main--article--section--offer--received--span">Offre négociée par
+                                                <span className="main--article--section--offer--received--span--span">
+                                                    &nbsp;{getOffer[0].userOfferNegotiateName}</span>
+                                                </span>
+                                                
+                                                <span className="main--article--section--offer--received--span--number">
+                                                    {getOffer[0].offer_negotiate_submitted}€
+                                                </span>
+
+                                                <form className="main--article--section--offer--received--form--accept--negotiate" name="main--article--section--offer--received--form--accept--negotiate" onSubmit={(e) => handleSubmitAcceptNegotiateOffer(e, getOffer[0].userOfferNegotiateName, getOffer[0].offer_negotiate_submitted)}>
+
+                                                    <div className="main--article--section--offer--received--accept--div">
+
+                                                        <span className="main--article--section--offer--received--accept--div--span">
+                                                            Accepter ?
+                                                        </span>
+
+                                                        <div className="main--article--section--offer--received--accept--div--yes--no--div">
+                                                            
+                                                            <input className="main--article--section--offer--received--accept--div--yes--no--div--yes--input" type="radio" name="main--article--section--offer--received--accept--div--yes--no--div--radio" id="main--article--section--offer--received--accept--div--yes--no--div--yes--input" value="yes"/>
+
+                                                            <label htmlFor="main--article--section--offer--received--accept--div--yes--no--div--yes--input" className="main--article--section--offer--received--accept--div--yes--no--div--yes--label">
+                                                                OUI
+                                                            </label>
+                                                            
+                                                            <input className="main--article--section--offer--received--accept--div--yes--no--div--no--input" type="radio" name="main--article--section--offer--received--accept--div--yes--no--div--radio" id="main--article--section--offer--received--accept--div--yes--no--div--no--input" value="no"/>
+
+                                                            <label htmlFor="main--article--section--offer--received--accept--div--yes--no--div--no--input" className="main--article--section--offer--received--accept--div--yes--no--div--no--label">
+                                                                NON
+                                                            </label>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div className="main--article--section--offer--received--accept--div--negotiate--div">
+                                                            
+                                                        <span className="main--article--section--offer--received--accept--div--span">
+                                                            Négocier ?
+                                                        </span> 
+
+                                                        <input className="main--article--section--offer--received--accept--div--negotiate--div--input" type="number" step="0.01" name="main--article--section--offer--received--accept--div--negotiate--div--input" id="main--article--section--offer--received--accept--div--negotiate--div--input" onFocus={handleFocusInputNegotiate}/>
+
+                                                    </div>
+
+                                                    <button type="submit" className="main--article--section--offer--received--form--accept--negotiate--button--submit">Valider</button>
+
+                                                </form>
+
+                                                <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                                                </>
+
+                                            ) : getOffer[0] !== undefined && /*getOffer[0].productUserId*/getOffer[0].offerNegotiateUserId == userContext.user_id ?
+
+                                                (
+                                                    <>
+                                                        <span className="main--article--section--offer--received--span">Offre negociée envoyée à
+                                                        <span className="main--article--section--offer--received--span--span">
+                                                            &nbsp;{getOffer[0].userProductName}</span>
+                                                        </span>
+                                                        
+                                                        <span className="main--article--section--offer--received--span--number">
+                                                            {getOffer[0].offer_negotiate_submitted}€
+                                                        </span>
+                                                        <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                                                    </>
+                                                
+                                                ) :
+
+                                                    <>
+                                                    </>
+                                            }
+
+                                        </section>
+
                                     ) :
 
-                                        <>
-                                        <span className="main--article--section--offer--received--accepted--span">
-                                            Offre acceptée par {getOffer[0] !== undefined ? getOffer[0].userProductName : ""} !
-                                        </span>
+                                        <section className="main--article--section--offer--received--accepted">
+                                                
+                                            <div className="main--article--section--offer--received--accepted--contact--div">
 
-                                        <button type="button" className="main--article--section--offer--received--accepted--button" name="main--article--section--offer--received--accepted--button" onClick={handleClickContactUser}>Contacter {getOffer[0] !== undefined  && getOffer[0].userProductName !== undefined ? getOffer[0].userProductName : ""}</button>
-                                        </>
 
-                                    }
+                                                <form className="main--article--section--offer--received--accepted--contact--div--form" name="main--article--section--offer--received--accepted--contact--div--form" onSubmit={handleSendMessageContact}>
 
-                                    <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
-                                </section>
+                                                    <div className="main--article--section--offer--received--accepted--contact--div--h3--wrap">
+                                                        <h3 className="main--article--section--offer--received--accepted--contact--div--h3">
+                                                            Discussion
+                                                        </h3>
+                                                        <span className="cross--span" onClick={handleCloseContactDiv}>x</span>
+                                                    </div>
 
+                                                    <div className="main--article--section--offer--received--accepted--chat--div">
+
+                                                        <div className="main--article--section--offer--received--accepted--chat--div--span--message--wrap">
+                                                            {/* offer messages */}
+                                                        </div>
+
+                                                    </div>
+
+                                                    <input type="text" className="main--article--section--offer--received--accepted--contact--div--input" id="main--article--section--offer--received--accepted--contact--div--input" name="main--article--section--offer--received--accepted--contact--div--input"/>
+
+                                                    <button type="submit" className="main--article--section--offer--received--accepted--contact--div--button" id="main--article--section--offer--received--accepted--contact--div--button" name="main--article--section--offer--received--accepted--contact--div--button">Envoyer</button>
+
+                                                </form>
+
+                                            </div>
+                                            
+                                            {getOffer[0] !== undefined && getOffer[0].productUserId == userContext.user_id ?
+                                            
+                                            (
+                                                <>
+                                                <span className="main--article--section--offer--received--accepted--span">
+                                                    Offre de {getOffer[0] !== undefined  && getOffer[0].userFirstName !== undefined ? getOffer[0].userFirstName : ""} d'un montant de {getOffer[0] !== undefined  && getOffer[0].offer_submitted !== undefined ? getOffer[0].offer_submitted : ""}€ acceptée
+                                                </span>
+
+                                                <button type="button" className="main--article--section--offer--received--accepted--button" name="main--article--section--offer--received--accepted--button" onClick={handleClickContactUser}>Contacter {getOffer[0] !== undefined  && getOffer[0].userFirstName !== undefined ? getOffer[0].userFirstName : ""}</button>
+                                                </>
+                                            ) :
+
+                                                <>
+                                                <span className="main--article--section--offer--received--accepted--span">
+                                                    Offre acceptée par {getOffer[0] !== undefined && getOffer[0].hasOwnProperty("offerNegotiateUserId") && getOffer[0].offerNegotiateUserId !== getOffer[0].offerUserId ? getOffer[0].userFirstName : getOffer[0] !== undefined && !getOffer[0].hasOwnProperty("offerNegotiateUserId") ? getOffer[0].userProductName : ""} pour un montant de {getOffer[0] !== undefined && getOffer[0].hasOwnProperty("offer_negotiate_submitted") ? getOffer[0].offer_negotiate_submitted : getOffer[0] !== undefined ? getOffer[0].offer_submitted : ""}€ !
+                                                </span>
+
+                                                <button type="button" className="main--article--section--offer--received--accepted--button" name="main--article--section--offer--received--accepted--button" onClick={handleClickContactUser}>Contacter {getOffer[0] !== undefined  && getOffer[0].userProductName !== undefined ? getOffer[0].userProductName : ""}</button>
+                                                </>
+
+                                            }
+
+                                            <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                                            
+                                        </section>
                         }
 
                     </article>

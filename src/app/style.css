@@ -847,6 +847,20 @@ body {
     color: black;
 }
 
+.main--section--myoffers--display--section--filters {
+    text-align: center;
+    font-family: var(--fontText);
+    font-size: .8rem;
+}
+
+.main--section--myoffers--display--section--filters--select {
+    font-family: var(--fontText);
+    font-size: .7rem;
+    text-align: center;
+    width: 60%;
+    border-radius: 3px;
+}
+
 .main--section--myoffers--display--ul {
     list-style-type: none;
     padding: 0;
@@ -862,6 +876,14 @@ body {
 
 .main--section--myoffers--display--ul--li.active--accepted {
     background-color: #96e079;
+}
+
+.main--section--myoffers--display--ul--li.active--negotiate {
+    background-color: #eba235;
+}
+
+.main--section--myoffers--display--ul--li.active--refused {
+    background-color: rgb(255 86 86);
 }
 
 .main--section--myoffers--display--ul--li--span--offer {
