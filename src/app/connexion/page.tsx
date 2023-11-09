@@ -10,6 +10,7 @@ import { SyntheticEvent } from "react";
 import arrowLeft from "../../../public/assets/images/arrow-left.svg";
 
 import { DataContext, UserContext } from "../layout";
+import Footer from "../../../components/Footer/page";
 
 export interface IUserData {
     user_mail: string;
@@ -17,6 +18,7 @@ export interface IUserData {
     user_firstname: string;
     user_address: string;
     user_zip: number;
+    user_city: string;
     user_phone: string;
     user_id: number;
     user_role: string;
@@ -55,11 +57,14 @@ export default function Connection(): ReactElement {
             const user_mail = mailInput.value;
             const user_password = passwordInput.value;
 
+            dataContext.setSpinnerIsActive(true);
+
             fetchUser(user_mail, user_password);
         }
     };
 
     const fetchUser = async (user_mail: string, user_password: string) => {
+
         const response: Response = await fetch(`http://127.0.0.1:8000/api/getuser/${user_mail}`, {
             method: "POST",
             headers: {
@@ -76,12 +81,13 @@ export default function Connection(): ReactElement {
         const data = await response.json();
 
         if (data.hasOwnProperty("jwt")) {
-            userContext.setUserData(user_mail, data.user_name, data.user_firstname, data.user_address, data.user_zip, data.user_phone, data.user_id, data.user_role, data.jwt);
+            userContext.setUserData(user_mail, data.user_name, data.user_firstname, data.user_address, data.user_zip, data.user_city, data.user_phone, data.user_id, data.user_role, data.jwt);
             spanMessage.textContent = "Authentification réalisée avec succès";
             asideError.classList.add("aside--success", "active_success");
 
             setTimeout(() => {
                 asideError.classList.remove("aside--success", "active_success");
+                dataContext.setSpinnerIsActive(false);
             }, 1400);
 
             setTimeout(() => {
@@ -90,6 +96,8 @@ export default function Connection(): ReactElement {
         }
 
         if (data.hasOwnProperty("userFound") || data.hasOwnProperty("userPass")) {
+
+            dataContext.setSpinnerIsActive(false);
 
             if (data.hasOwnProperty("userFound")) {
                 spanMessage.textContent = "Utilisateur non enregistré";
@@ -144,6 +152,8 @@ export default function Connection(): ReactElement {
                     <button className="main--section--signup--connection--button" type="button" name="main--section--signup--connection--button" id="main--section--signup--connection--button">S'inscrire</button>
                 </Link>
             </section>
+
+            <Footer />
         </main>
     );
 }

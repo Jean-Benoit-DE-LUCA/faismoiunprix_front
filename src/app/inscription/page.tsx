@@ -5,16 +5,21 @@ import Image from "next/image";
 
 import arrowLeft from "../../../public/assets/images/arrow-left.svg";
 
-import { SyntheticEvent, useContext } from "react";
+import { SyntheticEvent, useContext, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
-import { UserContext } from "../layout";
+import { FunctionContext, UserContext } from "../layout";
+import Footer from "../../../components/Footer/page";
+
+import arrowTop from "../../../public/assets/images/arrow-top.svg";
 
 export default function Signup() {
 
     const Router = useRouter();
+
     const userContext = useContext(UserContext);
+    const functionContext = useContext(FunctionContext);
 
     const handleSubmitSignUp = async (e: SyntheticEvent) => {
         e.preventDefault();
@@ -24,6 +29,7 @@ export default function Signup() {
         const formEmail = (document.getElementsByClassName("main--section--signup--form--input--email")[0] as HTMLInputElement);
         const formAddress = (document.getElementsByClassName("main--section--signup--form--input--address")[0] as HTMLInputElement);
         const formZip = (document.getElementsByClassName("main--section--signup--form--input--zip")[0] as HTMLInputElement);
+        const formCity = (document.getElementsByClassName("main--section--signup--form--input--city")[0] as HTMLInputElement);
         const formPhone = (document.getElementsByClassName("main--section--signup--form--input--phone")[0] as HTMLInputElement);
         const formPassword = (document.getElementsByClassName("main--section--signup--form--input--password")[0] as HTMLInputElement);
         const formPasswordConfirm = (document.getElementsByClassName("main--section--signup--form--input--password_confirmation")[0] as HTMLInputElement);
@@ -36,6 +42,7 @@ export default function Signup() {
             formEmail.value == "" ||
             formAddress.value == "" ||
             formZip.value == "" ||
+            formCity.value == "" ||
             formPhone.value == "" ||
             formPassword.value == "" ||
             formPasswordConfirm.value == "") {
@@ -71,6 +78,7 @@ export default function Signup() {
                     email: formEmail.value,
                     address: formAddress.value,
                     zip: formZip.value,
+                    city: formCity.value,
                     phone: formPhone.value,
                     password: formPassword.value,
                     password_confirmation: formPasswordConfirm.value
@@ -78,13 +86,15 @@ export default function Signup() {
             });
 
             const data = await response.json();
+
+            console.log(data);
             
             if (data.flag == true) {
 
                 spanMessage.textContent = data.message;
                 asideError.classList.add("active");
 
-                userContext.setUserData(data.user[0].user_mail, data.user[0].user_name, data.user[0].user_firstname, data.user[0].user_address, data.user[0].user_zip, data.user[0].user_phone, data.user[0].id, data.user[0].user_role, data.jwt);
+                userContext.setUserData(data.user[0].user_mail, data.user[0].user_name, data.user[0].user_firstname, data.user[0].user_address, data.user[0].user_zip, data.user[0].user_city, data.user[0].user_phone, data.user[0].id, data.user[0].user_role, data.jwt);
     
                 setTimeout(() => {
                     asideError.classList.remove("active");
@@ -106,6 +116,10 @@ export default function Signup() {
             }
         }
     };
+
+    useEffect(() => {
+        window.addEventListener("scroll", () => functionContext.scrollDivArrowAppear(200));
+    }, []);
 
     return (
         <main className="main">
@@ -143,13 +157,18 @@ export default function Signup() {
                 </div>
 
                 <div className="main--section--login--connection--form--email--wrap">
-                    <label className="main--section--signup--form--label--address" htmlFor="main--section--signup--form--input--address">Adresse (rue):</label>
+                    <label className="main--section--signup--form--label--address" htmlFor="main--section--signup--form--input--address">Adresse:</label>
                     <input className="main--section--signup--form--input--address" name="main--section--signup--form--input--address" id="main--section--signup--form--input--address"/>
                 </div>
 
                 <div className="main--section--login--connection--form--email--wrap">
                     <label className="main--section--signup--form--label--zip" htmlFor="main--section--signup--form--input--zip">Code Postal:</label>
                     <input className="main--section--signup--form--input--zip" name="main--section--signup--form--input--zip" id="main--section--signup--form--input--zip" type="number"/>
+                </div>
+
+                <div className="main--section--login--connection--form--email--wrap">
+                    <label className="main--section--signup--form--label--city" htmlFor="main--section--signup--form--input--city">Ville:</label>
+                    <input className="main--section--signup--form--input--city" name="main--section--signup--form--input--city" id="main--section--signup--form--input--city" type="text"/>
                 </div>
 
                 <div className="main--section--login--connection--form--email--wrap">
@@ -176,6 +195,17 @@ export default function Signup() {
             </Link>
 
         </section>
+
+        <div className="arrow--top--scroll--div" onClick={functionContext.clickBackTop}>
+            <Image
+            className="arrow--top--scroll--div--img--arrow"
+            src={arrowTop}
+            alt="arrow-top"
+            unoptimized
+            />
+        </div>
+
+        <Footer />
     </main>
     );
 }

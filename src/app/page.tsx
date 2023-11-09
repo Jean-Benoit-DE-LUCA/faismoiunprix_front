@@ -1,13 +1,18 @@
 "use client";
 
-import { ReactElement, useState, useContext, useEffect } from "react";
+import { ReactElement, useState, useContext, useEffect, SyntheticEvent } from "react";
 
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
-import { DataContext, UserContext } from "./layout";
+import { DataContext, FunctionContext, UserContext } from "./layout";
 
 import { Product } from "./layout";
-import { JsxElement } from "typescript";
+
+import Footer from "../../components/Footer/page";
+
+import arrowTop from "../../public/assets/images/arrow-top.svg";
 
 export default function App(): ReactElement {
 
@@ -15,8 +20,12 @@ export default function App(): ReactElement {
     value: string,
   }
 
+  const params = useSearchParams();
+  const Router = useRouter();
+
   const dataContext = useContext(DataContext);
   const userContext = useContext(UserContext);
+  const functionContext = useContext(FunctionContext);
 
   const [val, setVal] = useState<IInputChange>({value: ""});
 
@@ -28,33 +37,60 @@ export default function App(): ReactElement {
   const filterInputFunc = (inputTyped: any = ""): Array<Product> => {
     let dataContextProductsCopy = [...dataContext.data];
     const filterInput = dataContextProductsCopy.filter( elem => elem.product_name.toLowerCase().includes(inputTyped.toLowerCase()));
+    
+    if (filterInput.length > 50) {
+
+      const filterInputSliced = filterInput.slice(0, 50);
+      return filterInputSliced;
+    }
+
     return filterInput;
   }
 
   const handleLogout = (): void => {
-    userContext.setUserData("", "", "", "", "", "", "", "", "");
+    userContext.setUserData("", "", "", "", "", "", "", "", "", "");
   };
 
   const errorAuthFunc = () => {
 
     const asideError = document.getElementsByClassName("aside aside--error aside--error--auth")[0];
+    const asideErrorSpan = document.getElementsByClassName("aside--error--span")[0];
 
+    asideErrorSpan.textContent = sessionStorage.getItem("errorAuth");
     asideError.classList.add("active");
+
+    Router.push("/");
 
     setTimeout(() => {
 
       asideError.classList.remove("active");
       sessionStorage.removeItem("errorAuth");
+      //Router.push("/");
     }, 3000);
   };
 
   useEffect(() => {
 
+    if (params.get("prof") == "false") {
+      sessionStorage.setItem("errorAuth", "Veuillez vous authentifier afin d'accéder à votre profil");
+    }
+
+    else if (params.get("prod") == "false") {
+      sessionStorage.setItem("errorAuth", "Veuillez vous authentifier afin d'ajouter un produit");
+    }
+
+    else if (params.get("upd") == "false") {
+      sessionStorage.setItem("errorAuth", "Modification du produit impossible");
+    }
+
     if (sessionStorage.getItem("errorAuth") !== null) {
 
       errorAuthFunc()
     }
-  }, [sessionStorage.getItem("errorAuth")]);
+
+    window.addEventListener("scroll", () => functionContext.scrollDivArrowAppear(400));
+
+  }, []);
 
   return (
     
@@ -62,7 +98,7 @@ export default function App(): ReactElement {
 
           <aside className="aside aside--error aside--error--auth">
             <span className="aside--error--span">
-              Veuillez vous connecter afin d'ajouter un produit
+              
             </span>
           </aside>
 
@@ -72,6 +108,7 @@ export default function App(): ReactElement {
         <p className="main--p">Bienvenue {userContext.user_firstname}!</p>
         
         <section className="main--section--myproducts--myoffers--div">
+          <Link className="main--section--myproducts--myoffers--div--myprofile" href="/profil">Mon profil</Link>
           <Link className="main--section--myproducts--myoffers--div--myproducts" href="/produits/mesproduits">Mes produits</Link>
           <Link className="main--section--myproducts--myoffers--div--myoffers" href="/mesoffres">Mes offres</Link>
 
@@ -126,6 +163,17 @@ export default function App(): ReactElement {
           </Link>
         )}
       </ul>
+
+      <div className="arrow--top--scroll--div" onClick={functionContext.clickBackTop}>
+        <Image
+          className="arrow--top--scroll--div--img--arrow"
+          src={arrowTop}
+          alt="arrow-top"
+          unoptimized
+        />
+      </div>
+
+      <Footer />
       
     </main>
   );

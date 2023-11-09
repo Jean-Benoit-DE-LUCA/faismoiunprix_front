@@ -1,4 +1,9 @@
+import { DataContext } from "@/app/layout";
+import { useContext } from "react";
+
 export default function Header(props: any) {
+
+  const dataContext = useContext(DataContext);
     
     return (
         <header className="header">
@@ -20,6 +25,7 @@ export default function Header(props: any) {
             <div className="header--h1--span4--div">Prix, et oui, on est pas là pour la gloire non plus!</div>
           </span>
         </h1>
+        <span className={dataContext.spinnerActive ? "loader active" : "loader"}></span>
       </header>
     );
 }

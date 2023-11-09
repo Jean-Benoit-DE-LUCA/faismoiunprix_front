@@ -9,6 +9,7 @@ import { useContext, useState, useEffect, SyntheticEvent, FormEvent } from "reac
 import arrowLeft from "../../../../public/assets/images/arrow-left.svg";
 
 import { DataContext, UserContext } from "../../../app/layout";
+import Footer from "../../../../components/Footer/page";
 
 export default function OfferId({ params }: {params: {offer_id: string}}) {
 
@@ -533,6 +534,8 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
 
                                                 <input className="main--article--section--offer--received--accept--div--negotiate--div--input" type="number" step="0.01" name="main--article--section--offer--received--accept--div--negotiate--div--input" id="main--article--section--offer--received--accept--div--negotiate--div--input" onFocus={handleFocusInputNegotiate}/>
 
+                                                <span className="main--article--specific--product--section--offer--div--input--span offer--currency--span">€</span>
+
                                             </div>
 
                                             <button type="submit" className="main--article--section--offer--received--form--accept--negotiate--button--submit">Valider</button>
@@ -730,6 +733,8 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
                 <>
                 </>
                 }
+
+            <Footer />
 
         </main>
     );

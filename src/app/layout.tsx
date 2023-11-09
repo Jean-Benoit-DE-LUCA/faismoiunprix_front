@@ -7,6 +7,7 @@ import { createContext, useState, useEffect} from 'react';
 import Header from '../../components/Header/page';
 
 import { IUserData } from './connexion/page';
+import Footer from '../../components/Footer/page';
 
 export interface Product {
   id: number;
@@ -25,6 +26,13 @@ export interface DContext {
   setAddProductCount: any;
   getProduct: any;
   setProduct: any;
+  spinnerActive: boolean
+  setSpinnerIsActive: any;
+}
+
+export interface IFunctionContext {
+  scrollDivArrowAppear: any;
+  clickBackTop: any;
 }
 
 export interface UContext {
@@ -35,7 +43,9 @@ export const DataContext = createContext<DContext>({
   data: [],
   setAddProductCount: () => {},
   getProduct: [],
-  setProduct: () => {}
+  setProduct: () => {},
+  spinnerActive: false,
+  setSpinnerIsActive: (bool: boolean) => {}
 });
 
 export const UserContext = createContext<IUserData>({
@@ -44,11 +54,17 @@ export const UserContext = createContext<IUserData>({
   user_firstname: "",
   user_address: "",
   user_zip: NaN,
+  user_city: "",
   user_phone: "",
   user_id: NaN,
   user_role: "",
   user_jwt: "",
   setUserData: () => {}
+});
+
+export const FunctionContext = createContext<IFunctionContext>({
+  scrollDivArrowAppear: function() {},
+  clickBackTop: function() {},
 });
 
 export default function RootLayout({
@@ -60,20 +76,21 @@ export default function RootLayout({
   const [dataProducts, setDataProducts] = useState<Array<Product>>([]);
   const [addProductCount, setAddProductCount] = useState<number>(0);
   const [getProduct, setGetProduct] = useState<Array<any>>([]);
-
-  const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_firstname: "", user_address: "", user_zip: NaN, user_phone: "", user_id: NaN, user_role: "", user_jwt: "", setUserData: () => {}});
+  const [spinnerActive, setSpinnerActive] = useState<boolean>(false);
+  const [userData, setUserData] = useState<IUserData>({user_mail: "", user_name: "", user_firstname: "", user_address: "", user_zip: NaN, user_city: "", user_phone: "", user_id: NaN, user_role: "", user_jwt: "", setUserData: () => {}});
 
   const updateProductCount = (valueCount: number) => {
     setAddProductCount(addProductCount + valueCount);
   }
 
-  const updateUserData = (valueMail: string, valueName: string, valueFirstName: string, valueAddress: string, valueZip: number, valuePhone: string, valueId: number, valueRole: string, valueJwt: string) => {
+  const updateUserData = (valueMail: string, valueName: string, valueFirstName: string, valueAddress: string, valueZip: number, valueCity: string, valuePhone: string, valueId: number, valueRole: string, valueJwt: string) => {
     setUserData({
       user_mail: valueMail,
       user_name: valueName,
       user_firstname: valueFirstName,
       user_address: valueAddress,
       user_zip: valueZip,
+      user_city: valueCity,
       user_phone: valuePhone,
       user_id: valueId,
       user_role: valueRole,
@@ -84,6 +101,39 @@ export default function RootLayout({
 
   const updateGetProduct = (productArray: Array<any>) => {
     setGetProduct(productArray);
+    /*const newArray = new Array().concat(productArray);
+    setGetProduct(newArray);*/
+  };
+
+  const setSpinnerActiveFunction = (bool: boolean) => {
+    setSpinnerActive(bool);
+  }
+
+  const handleScrollDivAppear = (scrollNum: number) => {
+    
+    if (document.documentElement.contains(document.getElementsByClassName("arrow--top--scroll--div")[0]) !== false) {
+
+      const divArrowTop = (document.getElementsByClassName("arrow--top--scroll--div")[0] as HTMLDivElement);
+
+      if (document.documentElement.scrollTop > scrollNum) {
+
+        divArrowTop.classList.add("active");
+      }
+
+      else if (document.documentElement.scrollTop < scrollNum) {
+
+        divArrowTop.classList.remove("active");
+      }
+      
+    }
+  };
+
+  const handleClickBackTop = () => {
+
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   };
 
   useEffect(() => {
@@ -98,8 +148,10 @@ export default function RootLayout({
   const objDataContext: DContext = {
     data: dataProducts,
     setAddProductCount: updateProductCount,
-    getProduct: [],
-    setProduct: updateGetProduct
+    getProduct: getProduct,
+    setProduct: updateGetProduct,
+    spinnerActive: spinnerActive,
+    setSpinnerIsActive: setSpinnerActiveFunction
   };
 
   const objUserContext: IUserData = {
@@ -108,11 +160,17 @@ export default function RootLayout({
     user_firstname: userData.user_firstname,
     user_address: userData.user_address,
     user_zip: userData.user_zip,
+    user_city: userData.user_city,
     user_phone: userData.user_phone,
     user_id: userData.user_id,
     user_role: userData.user_role,
     user_jwt: userData.user_jwt,
     setUserData: updateUserData
+  };
+
+  const objFunctionContext: IFunctionContext = {
+    scrollDivArrowAppear: handleScrollDivAppear,
+    clickBackTop: handleClickBackTop,
   };
 
   return (
@@ -127,13 +185,14 @@ export default function RootLayout({
 
       <body>
         <div className="container">
-          <Header>
-          </Header>
-            <DataContext.Provider value={objDataContext}>
+          <DataContext.Provider value={objDataContext}>
+            <Header />
               <UserContext.Provider value={objUserContext}>
-                {children}
+                <FunctionContext.Provider value={objFunctionContext}>
+                  {children}
+                </FunctionContext.Provider>
               </UserContext.Provider>
-            </DataContext.Provider>
+          </DataContext.Provider>
         </div>
       </body>
 

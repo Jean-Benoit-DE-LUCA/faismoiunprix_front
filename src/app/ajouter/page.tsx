@@ -5,11 +5,12 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 
-import { FormEvent, useContext} from "react";
+import { FormEvent, useContext, useState } from "react";
 
 import arrowLeft from "../../../public/assets/images/arrow-left.svg";
 
 import { UserContext, DataContext } from "../layout";
+import Footer from "../../../components/Footer/page";
 
 export default function Add() {
 
@@ -17,6 +18,8 @@ export default function Add() {
 
     const userContext = useContext(UserContext);
     const dataContext = useContext(DataContext);
+
+    const [getCity, setCity] = useState<string>(userContext.user_city);
 
     const handleAddProductSubmit = async (e: FormEvent<HTMLFormElement>) => {
 
@@ -74,7 +77,6 @@ export default function Add() {
             }, 3000);
     
             const radioValueChecked = (document.getElementsByClassName(nameClassRadioDelivery)[0] as HTMLInputElement);
-            console.log(userContext);
 
             const response = await fetch("http://127.0.0.1:8000/api/insertproduct", {
                 method: "POST",
@@ -92,9 +94,10 @@ export default function Add() {
             });
             
             const data = await response.json();
-            console.log(data);
 
             if (data.response == true) {
+
+                dataContext.setSpinnerIsActive(true)
 
                 dataImages.append("lastInsertId", data.lastInsertId);
 
@@ -109,6 +112,7 @@ export default function Add() {
                 dataContext.setAddProductCount(1);
 
                 setTimeout(() => {
+                    dataContext.setSpinnerIsActive(false);
                     Router.push("/");
                 }, 3000);
             }
@@ -186,7 +190,7 @@ export default function Add() {
 
                         <div className="main--section--add--product--form--input--wrap">
                             <label className="main--section--add--product--form--label--place" htmlFor="main--section--add--product--form--input--place">Lieu:</label>
-                            <input className="main--section--add--product--form--input--place" type="text" name="main--section--add--product--form--input--place" id="main--section--add--product--form--input--place"/>
+                            <input className="main--section--add--product--form--input--place" type="text" name="main--section--add--product--form--input--place" id="main--section--add--product--form--input--place" value={getCity} onChange={(e) => setCity(e.target.value)}/>
                         </div>
 
                         <fieldset className="main--section--add--product--form--fieldset">
@@ -211,15 +215,15 @@ export default function Add() {
 
                     </span>
                 </aside>
+
+                <Footer />
             </main>
         );
     }
 
     if (userContext.user_jwt == "") {
 
-        sessionStorage.setItem("errorAuth", "Veuillez vous authentifier afin d'ajouter un produit");
-
-        return redirect("/");
+        return redirect("/?prod=false");
     }
 
 }

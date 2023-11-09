@@ -7,9 +7,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { DataContext, UserContext } from "@/app/layout";
-import { useEffect, useContext, useState } from "react"
+import { useEffect, useContext, useState, Fragment } from "react"
 
 import { Product } from "@/app/layout";
+import Footer from "../../../../components/Footer/page";
 
 export interface ISpecificProduct {
     productFound: Array<Product>;
@@ -115,6 +116,9 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
         fetchProduct();
     }, []);
 
+    console.log(userContext);
+    console.log(getProduct);
+
     return (
         <main className="main">
 
@@ -127,92 +131,114 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
             
             (
             <article className="main--article--specific--product">
+
+                {userContext.user_id == getProduct.productFound[0].user_id ?
+
+                    <Link href={`/produits/${params.product_id}/modifier`} className="main--article--specific--product--update--anchor">
+                        Modifier
+                    </Link>
+
+                    :
+
+                    <>
+                    </>
+                }
+
+
                 <h1 className="main--article--specific--product--h1">
                     {getProduct.productFound[0].product_name}
                     <span className="main--article--specific--product--h1--span"></span>
                 </h1>
 
-                {getProduct.productFound[0].product_photos == null ?
+                <div className="main--article--specific--product--section--images--description--wrap">
 
-                (
-                    <section className="main--article--specific--product--section--images">
-                    <div className="main--article--specific--product--section--images--div--main">
-                        <Image
-                            className="main--article--specific--product--section--images--div--main--img"
-                            src="/assets/images/no_image.png"
-                            alt="main-image"
-                            fill
-                            priority={true}
-                            sizes="50px"
-                        />
-                    </div>
-                    <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
-                </section>
-                ):
+                    {getProduct.productFound[0].product_photos == null ?
 
-                <section className="main--article--specific--product--section--images">
-                    <div className="main--article--specific--product--section--images--div--main">
-                        <a className="main--article--specific--product--section--images--div--main--anchor" href={`http://127.0.0.1:8000/assets/images/${imageName}`} target="_blank">
-                        <Image
-                            className="main--article--specific--product--section--images--div--main--img"
-                            src={`http://127.0.0.1:8000/assets/images/${imageName}`}
-                            unoptimized={true}
-                            alt="main-image"
-                            fill
-                            priority={true}
-                            sizes="50px"
-                        />
-                        </a>
-                    </div>
-                    
-                    {getProduct.productFound[0].product_photos.split(',').length >= 2 ?
-
-                    (
-                    <>
-                    <div className="main--article--specific--product--section--images--div--others--wrap">
-                        <div className="main--article--specific--product--section--images--div--others">
-
-                            {imagesNamesProduct.slice(1).map( elem => 
-                                
-                                <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap" 
-                                onClick={handleClickDivOtherImage}>
-
+                    (   
+                        
+                        <section className="main--article--specific--product--section--images">
+                            <div className="main--article--specific--product--section--images--div--main">
                                 <Image
-                                    className="main--article--specific--product--section--images--div--others--grid--element--img"
-                                    src={`http://127.0.0.1:8000/assets/images/${elem}`}
-                                    unoptimized={true}
-                                    data-img={elem}
-                                    alt="other-image"
+                                    className="main--article--specific--product--section--images--div--main--img"
+                                    src="/assets/images/no_image.png"
+                                    alt="main-image"
                                     fill
                                     priority={true}
                                     sizes="50px"
                                 />
-
-                                </div>
-
-                            )}
-
-                        </div>
-                    </div>
-                    <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
-                    </>
+                            </div>
+                            <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                    </section>
                     ):
 
-                    <>
-                    </>
+                    <section className="main--article--specific--product--section--images">
+                        <span className="main--article--specific--product--section--description--div--description--p--title">Photos</span>
+                        <div className="main--article--specific--product--section--images--div--main">
+                            <a className="main--article--specific--product--section--images--div--main--anchor" href={`http://127.0.0.1:8000/assets/images/${imageName}`} target="_blank">
+                            <Image
+                                className="main--article--specific--product--section--images--div--main--img"
+                                src={`http://127.0.0.1:8000/assets/images/${imageName}`}
+                                unoptimized={true}
+                                alt="main-image"
+                                fill
+                                priority={true}
+                                sizes="50px"
+                            />
+                            </a>
+                        </div>
+                        
+                        {getProduct.productFound[0].product_photos.split(',').length >= 2 ?
 
+                        (
+                        <>
+                        <div className="main--article--specific--product--section--images--div--others--wrap">
+                            <div className="main--article--specific--product--section--images--div--others">
+
+                                {imagesNamesProduct.slice(1).map( elem => 
+                                    
+                                    <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap" 
+                                    onClick={handleClickDivOtherImage}>
+
+                                    <Image
+                                        className="main--article--specific--product--section--images--div--others--grid--element--img"
+                                        src={`http://127.0.0.1:8000/assets/images/${elem}`}
+                                        unoptimized={true}
+                                        data-img={elem}
+                                        alt="other-image"
+                                        fill
+                                        priority={true}
+                                        sizes="50px"
+                                    />
+
+                                    </div>
+
+                                )}
+
+                            </div>
+                        </div>
+                        <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                        </>
+                        ):
+
+                        <>
+                        </>
+
+                        }
+                    </section>
                     }
-                </section>
-                }
 
-                <section className="main--article--specific--product--section--description">
-                    <div className="main--article--specific--product--section--description--div--description">
-                        <p className="main--article--specific--product--section--description--div--description--p">
-                            {getProduct.productFound[0].product_description}
-                        </p>
-                    </div>
-                    <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
-                </section>
+                    <section className="main--article--specific--product--section--description">
+                        <div className="main--article--specific--product--section--description--div--description">
+
+                            <span className="main--article--specific--product--section--description--div--description--p--title">Description</span>
+                            <p className="main--article--specific--product--section--description--div--description--p">
+                                {getProduct.productFound[0].product_description}
+                            </p>
+                        </div>
+                        <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                    </section>
+
+                </div>
 
                 {getProduct.productFound[0].user_id !== userContext.user_id ?
                 
@@ -253,6 +279,8 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
             <>
             </>
             }
+
+            <Footer />
         </main>
     );
 }

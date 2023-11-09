@@ -7,13 +7,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import arrowLeft from "../../../public/assets/images/arrow-left.svg";
-import { UserContext } from "../layout";
+import { FunctionContext, UserContext } from "../layout";
+import Footer from "../../../components/Footer/page";
+
+import arrowTop from "../../../public/assets/images/arrow-top.svg";
 
 export default function MyOffers() {
 
     const Router = useRouter();
 
     const userContext = useContext(UserContext);
+    const functionContext = useContext(FunctionContext);
 
     const [getOffers, setOffers] = useState<Array<any>>([]);
     const [getOffersCopy, setOffersCopy] = useState<Array<any>>([]);
@@ -71,24 +75,9 @@ export default function MyOffers() {
             setOffers(responseData.getOffersReceived);
             setOffersCopy(responseData.getOffersReceived);
         }
-
-        /*const response = await fetch(`http://127.0.0.1:8000/api/getuserofferssent/${userContext.user_id}`, {
-            method: "GET",
-            headers: {
-                "Content-type": "application/json",
-                "Authorization": `Bearer ${userContext.user_jwt}`
-            }
-        });
-
-        const responseData = await response.json();
-        
-        if (responseData.flag == true) {
-
-            setOffers(responseData.getOffersSent);
-        }*/
     }
 
-    const handleChangeOptionFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeOptionFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
         
         if (e.target.value == "-") {
 
@@ -123,6 +112,8 @@ export default function MyOffers() {
     useEffect(() => {
         const receivedButton = (document.getElementsByClassName("main--section--myoffers--display--first--div--anchor--received")[0] as HTMLButtonElement);
         receivedButton.click();
+
+        window.addEventListener("scroll", () => functionContext.scrollDivArrowAppear(200));
     }, []);
 
     console.log(getOffers);
@@ -208,6 +199,18 @@ export default function MyOffers() {
 
                 </ul>
             </section>
+
+            <div className="arrow--top--scroll--div" onClick={functionContext.clickBackTop}>
+                <Image
+                className="arrow--top--scroll--div--img--arrow"
+                src={arrowTop}
+                alt="arrow-top"
+                unoptimized
+                />
+            </div>
+
+            <Footer />
+
         </main>
     );
 }
