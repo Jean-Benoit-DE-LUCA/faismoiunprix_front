@@ -45,7 +45,7 @@ export default function Profile() {
         inputPassword.focus();
     };
 
-    const handleSubmitUpdateProfile = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmitUpdateProfile = async (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault();
         
@@ -76,9 +76,61 @@ export default function Profile() {
 
                 setTimeout(() => {
                     asideError.classList.remove("active_error");
-                }, 1400);
+                }, 2500);
                 
             }
+
+        else if (formPassword.value !== formPasswordConfirm.value) {
+
+            spanMessage.textContent = "Les mots de passe ne coincident pas";
+            asideError.classList.add("active_error");
+
+            setTimeout(() => {
+                asideError.classList.remove("active_error");
+            }, 2500);
+        }
+
+        else {
+
+            const response = await fetch(`http://127.0.0.1:8000/api/updateuser/${userContext.user_id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: formName.value,
+                    firstName: formFirstName.value,
+                    address: formAddress.value,
+                    zip: formZip.value,
+                    city: formCity.value,
+                    phone: formPhone.value,
+                    password: formPassword.value
+                })
+            })
+
+            const responseData = await response.json();
+
+            if (responseData.flag) {
+
+                spanMessage.textContent = "Profil modifié avec succès";
+                asideError.classList.add("active");
+
+                setTimeout(() => {
+                    asideError.classList.remove("active");
+                    Router.push('/');
+                }, 2500);
+            }
+
+            else if (!responseData.flag) {
+
+                spanMessage.textContent = "Erreur durant le processus de modification";
+                asideError.classList.add("active_error");
+
+                setTimeout(() => {
+                    asideError.classList.remove("active_error");
+                }, 2500);
+            }
+        }
     };
 
     useEffect(() => {

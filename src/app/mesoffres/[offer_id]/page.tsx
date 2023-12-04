@@ -40,7 +40,8 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
         const data = await response.json();
         setOffer(data.getOfferId);
 
-        if (data.getOfferId.product_photos !== null) {
+        if (data.getOfferId[0].product_photos !== null) {
+
             setImagesNamesProduct(data.getOfferId[0].product_photos.split(','));
             setImageName(data.getOfferId[0].product_photos.split(',')[0]);
         }
@@ -566,7 +567,7 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
                                     <section className="main--article--section--offer--received--accepted">
                                         
                                         <span className="main--article--section--offer--received--accepted--span">
-                                            Offre de {getOffer[0] !== undefined  && getOffer[0].userFirstName !== undefined ? getOffer[0].userFirstName : ""} d'un montant de {getOffer[0] !== undefined  && getOffer[0].offer_submitted !== undefined ? getOffer[0].offer_submitted : ""}€ refusée
+                                            Offre initiée par {getOffer[0] !== undefined  && getOffer[0].userFirstName !== undefined ? getOffer[0].userFirstName : ""} d'un montant de {getOffer[0] !== undefined  && getOffer[0].offer_submitted !== undefined ? getOffer[0].offer_submitted : ""}€ refusée
                                         </span>
 
                                         <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
@@ -589,13 +590,13 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
                                                 </div>
                                             </div>
 
-                                            {getOffer[0] !== undefined && /*getOffer[0].productUserId*/getOffer[0].offerNegotiateUserId !== userContext.user_id ?
+                                            {getOffer[0] !== undefined && /*getOffer[0].productUserId*/getOffer[0].offerNegotiateUserId !== userContext.user_id/*getOffer[0].productUserId*/ ?
 
                                             (
                                                 <>
                                                 <span className="main--article--section--offer--received--span">Offre négociée par
                                                 <span className="main--article--section--offer--received--span--span">
-                                                    &nbsp;{getOffer[0].userOfferNegotiateName}</span>
+                                                    &nbsp;{getOffer[0].userOfferNegotiateName/*userProductName*/}</span>
                                                 </span>
                                                 
                                                 <span className="main--article--section--offer--received--span--number">
@@ -645,7 +646,7 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
                                                 <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
                                                 </>
 
-                                            ) : getOffer[0] !== undefined && /*getOffer[0].productUserId*/getOffer[0].offerNegotiateUserId == userContext.user_id ?
+                                            ) : getOffer[0] !== undefined && /*getOffer[0].productUserId*/getOffer[0].offerNegotiateUserId == userContext.user_id && getOffer[0].offerNegotiateUserId == getOffer[0].offerUserId/*getOffer[0].offerUserId*/ ?
 
                                                 (
                                                     <>
@@ -660,6 +661,21 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
                                                         <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
                                                     </>
                                                 
+                                                ) : getOffer[0] !== undefined && getOffer[0].offerNegotiateUserId == userContext.user_id && getOffer[0].offerNegotiateUserId !== getOffer[0].offerUserId ?
+
+                                                (
+                                                    <>
+                                                        <span className="main--article--section--offer--received--span">Offre negociée envoyée à
+                                                        <span className="main--article--section--offer--received--span--span">
+                                                            &nbsp;{getOffer[0].userFirstName}</span>
+                                                        </span>
+                                                        
+                                                        <span className="main--article--section--offer--received--span--number">
+                                                            {getOffer[0].offer_negotiate_submitted}€
+                                                        </span>
+                                                        <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+
+                                                    </>
                                                 ) :
 
                                                     <>
@@ -705,7 +721,7 @@ export default function OfferId({ params }: {params: {offer_id: string}}) {
                                             (
                                                 <>
                                                 <span className="main--article--section--offer--received--accepted--span">
-                                                    Offre de {getOffer[0] !== undefined  && getOffer[0].userFirstName !== undefined ? getOffer[0].userFirstName : ""} d'un montant de {getOffer[0] !== undefined  && getOffer[0].offer_submitted !== undefined ? getOffer[0].offer_submitted : ""}€ acceptée
+                                                    Offre de {getOffer[0] !== undefined  && getOffer[0].userFirstName !== undefined  && getOffer[0].hasOwnProperty('userOfferNegotiateName') ? getOffer[0].userOfferNegotiateName : getOffer[0].userFirstName} d'un montant de {getOffer[0] !== undefined  && getOffer[0].offer_submitted !== undefined && getOffer[0].hasOwnProperty('offer_negotiate_submitted') ? getOffer[0].offer_negotiate_submitted : getOffer[0].offer_submitted}€ acceptée
                                                 </span>
 
                                                 <button type="button" className="main--article--section--offer--received--accepted--button" name="main--article--section--offer--received--accepted--button" onClick={handleClickContactUser}>Contacter {getOffer[0] !== undefined  && getOffer[0].userFirstName !== undefined ? getOffer[0].userFirstName : ""}</button>

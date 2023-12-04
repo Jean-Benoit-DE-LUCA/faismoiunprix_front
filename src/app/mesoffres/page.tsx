@@ -178,16 +178,31 @@ export default function MyOffers() {
                                 {elem.product_name}
                             </span>
 
-                            <div className="main--section--myproducts--display--ul--li--div--img">
-                                <Image
-                                    className="main--section--myproducts--display--ul--li--img"
-                                    src={`http://127.0.0.1:8000/assets/images/${elem.product_photos?.split(',')[0]}`}
-                                    alt="small--image--preview"
-                                    width={0}
-                                    height={0}
-                                    unoptimized={true}
-                                />
-                            </div>
+                            {elem.product_photos?.split(',')[0] !== undefined ?
+
+                                (
+                                    <div className="main--section--myproducts--display--ul--li--div--img">
+                                        <Image
+                                            className="main--section--myproducts--display--ul--li--img"
+                                            src={`http://127.0.0.1:8000/assets/images/${elem.product_photos?.split(',')[0]}`}
+                                            alt="small--image--preview"
+                                            width={0}
+                                            height={0}
+                                            unoptimized={true}
+                                        />
+                                    </div>
+                                ) : 
+                                    <div className="main--section--myproducts--display--ul--li--div--img">
+                                        <Image
+                                            className="main--section--myproducts--display--ul--li--img"
+                                            src={`http://127.0.0.1:3000/assets/images/no_image.png`}
+                                            alt="small--image--preview"
+                                            width={0}
+                                            height={0}
+                                            unoptimized={true}
+                                        />
+                                    </div>
+                            }
 
                             <span className="main--section--myoffers--display--ul--li--span--offer">
                                 {elem.offer_submitted}€

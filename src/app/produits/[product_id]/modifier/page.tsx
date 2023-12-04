@@ -4,7 +4,7 @@ import arrowLeft from "../../../../../public/assets/images/arrow-left.svg";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
 
 import { DataContext, UserContext } from "@/app/layout";
 import { useEffect, useContext, useState, Fragment } from "react"
@@ -508,354 +508,365 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
         document.addEventListener("click", handleClickOutsideDiv);
     }, []);
 
-    return (
-        <main className="main">
 
-            <button className="main--button--back" onClick={() => {Router.back()}}>
-                <Image className="main--button--back--img" src={arrowLeft} alt="arrow-left-image"/>
-                <span className="main--button--back--span">Retour</span>
-            </button>
 
-            <aside className="aside aside--error">
-                <span className="aside--error--span">
+    if (dataContext.getProduct.productFound !== undefined && userContext.user_id == dataContext.getProduct.productFound[0].user_id) {
 
-                </span>
-            </aside>
-
-            {getProduct.productFound[0] !== undefined ?
-            
-            (
-            <article className="main--article--specific--product">
-
-                {userContext.user_id == getProduct.productFound[0].user_id ?
-
-                    <span className="main--article--specific--product--update--title">Modifier votre annonce</span>
-
-                :
-
-                    <>
-                    </>
-                }
-                <form method="POST" className="form--update--product" name="form--update--product" id="form--update--product" onSubmit={handleSubmitUpdateProduct}>
+        return (
+            <main className="main">
+    
+                <button className="main--button--back" onClick={() => {Router.back()}}>
+                    <Image className="main--button--back--img" src={arrowLeft} alt="arrow-left-image"/>
+                    <span className="main--button--back--span">Retour</span>
+                </button>
+    
+                <aside className="aside aside--error">
+                    <span className="aside--error--span">
+    
+                    </span>
+                </aside>
+    
+                {getProduct.productFound[0] !== undefined ?
                 
-                    <h1 className="main--article--specific--product--h1 title--update--product">
-                        
-                            <span className="title--update--product--span--title">{getProduct.productFound[0].product_name}</span>
+                (
+                <article className="main--article--specific--product">
+    
+                    {userContext.user_id == getProduct.productFound[0].user_id ?
+    
+                        <span className="main--article--specific--product--update--title">Modifier votre annonce</span>
+    
+                    :
+    
+                        <>
+                        </>
+                    }
+                    <form method="POST" className="form--update--product" name="form--update--product" id="form--update--product" onSubmit={handleSubmitUpdateProduct}>
+                    
+                        <h1 className="main--article--specific--product--h1 title--update--product">
                             
-                            <div className="title--update--product--img--wrap" onClick={(e) => handleClickEditButton(e, "title")}>
+                                <span className="title--update--product--span--title">{getProduct.productFound[0].product_name}</span>
+                                
+                                <div className="title--update--product--img--wrap" onClick={(e) => handleClickEditButton(e, "title")}>
+                                    <Image
+                                        className="title--update--product--img"
+                                        src="/assets/images/edit-icon.svg"
+                                        alt="edit-icon"
+                                        height={0}
+                                        width={0}
+                                    />
+                                </div>
+                            
+                            
+                            <span className="main--article--specific--product--h1--span"></span>
+                        </h1>
+    
+                        <div className="title--update--product--input--div--wrap">
+                            <input type="text" className="title--update--product--input" id="title--update--product--input" name="title--update--product--input" />
+                            <div className="title--update--product--input--check--button" id="title--update--product--input--check--button" onClick={(e) => handleClickConfirmNew(e, "title")}>
                                 <Image
-                                    className="title--update--product--img"
-                                    src="/assets/images/edit-icon.svg"
-                                    alt="edit-icon"
-                                    height={0}
+                                    className="title--update--product--input--check--button--img"
+                                    src="/assets/images/tick.svg"
+                                    alt="tick"
                                     width={0}
+                                    height={0}
                                 />
                             </div>
-                        
-                        
-                        <span className="main--article--specific--product--h1--span"></span>
-                    </h1>
-
-                    <div className="title--update--product--input--div--wrap">
-                        <input type="text" className="title--update--product--input" id="title--update--product--input" name="title--update--product--input" />
-                        <div className="title--update--product--input--check--button" id="title--update--product--input--check--button" onClick={(e) => handleClickConfirmNew(e, "title")}>
-                            <Image
-                                className="title--update--product--input--check--button--img"
-                                src="/assets/images/tick.svg"
-                                alt="tick"
-                                width={0}
-                                height={0}
-                            />
+                            <span className="span--line--input--new--title"></span>
                         </div>
-                        <span className="span--line--input--new--title"></span>
-                    </div>
-
-                    <div className="main--article--specific--product--section--images--description--wrap">
-
-                        {getProduct.productFound[0].product_photos == null ?
-
-                        (   
-                                <>
-                                <section className="main--article--specific--product--section--images">
-                                    <div className="main--article--specific--product--section--images--div--main">
-                                        <a className="main--article--specific--product--section--images--div--main--anchor" href="http://localhost:3000/assets/images/no_image.png" target="_blank" onClick={handleClickMainImage}>
+    
+                        <div className="main--article--specific--product--section--images--description--wrap">
+    
+                            {getProduct.productFound[0].product_photos == null ?
+    
+                            (   
+                                    <>
+                                    <section className="main--article--specific--product--section--images">
+                                        <div className="main--article--specific--product--section--images--div--main">
+                                            <a className="main--article--specific--product--section--images--div--main--anchor" href="http://localhost:3000/assets/images/no_image.png" target="_blank" onClick={handleClickMainImage}>
+                                                <Image
+                                                    className="main--article--specific--product--section--images--div--main--img img--0"
+                                                    src="http://localhost:3000/assets/images/no_image.png"
+                                                    data-img="http://localhost:3000/assets/images/no_image.png"
+                                                    unoptimized={true}
+                                                    alt="main-image"
+                                                    fill
+                                                    priority={true}
+                                                    sizes="50px"
+                                                />
+                                            </a>
+    
+                                            <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
+                                            <button type="button" className="button--input--file" name="button--input--file" id="button--input--file">
+                                                <Image
+                                                    className="button--input--file--img--arrow--top"
+                                                    src="http://localhost:3000/assets/images/arrow-top.svg"
+                                                    alt="arrow_top"
+                                                    unoptimized={true}
+                                                    width={0}
+                                                    height={0}
+                                                />
+                                                <label htmlFor="input--file--new--picture input--0" className="input--file--new--picture--label"></label>
+                                                <input type="file" className="input--file--new--picture input--0" name="input--file--new--picture input--0" id="input--file--new--picture input--0" onChange={handleChangeFileInput}/>
+                                            </button>
+                                        </div>
+                                        {/*<span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>*/}
+                                    
+    
+                                    
+                                        <div className="main--article--specific--product--section--images--div--others--wrap">
+                                            <div className="main--article--specific--product--section--images--div--others">
+    
+                                            {Array.from(Array(2).keys()).map( elem => 
+    
+                                                <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap--wrap">
+                                                    <div className="main--article--specific--product--section--images--div--others--grid--element--img--wrap" 
+                                                    onClick={handleClickDivOtherImage}>
+    
+                                                    <Image
+                                                        className={`main--article--specific--product--section--images--div--others--grid--element--img img--${elem+1}`}
+                                                        src="http://localhost:3000/assets/images/no_image.png"
+                                                        unoptimized={true}
+                                                        data-img="http://localhost:3000/assets/images/no_image.png"
+                                                        alt="other-image"
+                                                        fill
+                                                        priority={true}
+                                                        sizes="50px"
+                                                    />
+                                                    
+                                                    </div>
+    
+                                                    <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
+                                                    <button type="button" className="button--input--file" name="button--input--file" id="button--input--file">
+                                                        <Image
+                                                            className="button--input--file--img--arrow--top"
+                                                            src="http://localhost:3000/assets/images/arrow-top.svg"
+                                                            alt="arrow_top"
+                                                            unoptimized={true}
+                                                            width={0}
+                                                            height={0}
+                                                        />
+                                                        <label htmlFor={`input--file--new--picture input--${elem+1}`} className="input--file--new--picture--label"></label>
+                                                        <input type="file" className={`input--file--new--picture input--${elem+1}`} name={`input--file--new--picture input--${elem+1}`} id={`input--file--new--picture input--${elem+1}`} onChange={handleChangeFileInput}/>
+                                                    </button>
+                                                </div>
+                                                
+                                            )}
+                                            
+                                            </div>
+                                        </div>
+                                    <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                                    </section>
+                                    </>
+    
+                            ):  getProduct.productFound[0].product_photos !== null ?
+    
+                                    <section className="main--article--specific--product--section--images">
+                                        <span className="main--article--specific--product--section--description--div--description--p--title">Photos</span>
+                                        <div className="main--article--specific--product--section--images--div--main">
+                                            <a className="main--article--specific--product--section--images--div--main--anchor" href={`${imageName}`} target="_blank" onClick={handleClickMainImage}>
                                             <Image
                                                 className="main--article--specific--product--section--images--div--main--img img--0"
-                                                src="http://localhost:3000/assets/images/no_image.png"
-                                                data-img="http://localhost:3000/assets/images/no_image.png"
+                                                src={`${imageName}`}
+                                                data-img={`${imageName}`}
                                                 unoptimized={true}
                                                 alt="main-image"
                                                 fill
                                                 priority={true}
                                                 sizes="50px"
                                             />
-                                        </a>
-
-                                        <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
-                                        <button type="button" className="button--input--file" name="button--input--file" id="button--input--file">
-                                            <Image
-                                                className="button--input--file--img--arrow--top"
-                                                src="http://localhost:3000/assets/images/arrow-top.svg"
-                                                alt="arrow_top"
-                                                unoptimized={true}
-                                                width={0}
-                                                height={0}
-                                            />
-                                            <label htmlFor="input--file--new--picture input--0" className="input--file--new--picture--label"></label>
-                                            <input type="file" className="input--file--new--picture input--0" name="input--file--new--picture input--0" id="input--file--new--picture input--0" onChange={handleChangeFileInput}/>
-                                        </button>
-                                    </div>
-                                    {/*<span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>*/}
-                                
-
-                                
-                                    <div className="main--article--specific--product--section--images--div--others--wrap">
-                                        <div className="main--article--specific--product--section--images--div--others">
-
-                                        {Array.from(Array(2).keys()).map( elem => 
-
-                                            <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap--wrap">
-                                                <div className="main--article--specific--product--section--images--div--others--grid--element--img--wrap" 
-                                                onClick={handleClickDivOtherImage}>
-
+                                            </a>
+    
+                                            <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
+                                            <button type="button" className="button--input--file" name="button--input--file" id="button--input--file">
                                                 <Image
-                                                    className={`main--article--specific--product--section--images--div--others--grid--element--img img--${elem+1}`}
-                                                    src="http://localhost:3000/assets/images/no_image.png"
+                                                    className="button--input--file--img--arrow--top"
+                                                    src="http://localhost:3000/assets/images/arrow-top.svg"
+                                                    alt="arrow_top"
                                                     unoptimized={true}
-                                                    data-img="http://localhost:3000/assets/images/no_image.png"
-                                                    alt="other-image"
-                                                    fill
-                                                    priority={true}
-                                                    sizes="50px"
+                                                    width={0}
+                                                    height={0}
                                                 />
-                                                
-                                                </div>
-
-                                                <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
-                                                <button type="button" className="button--input--file" name="button--input--file" id="button--input--file">
-                                                    <Image
-                                                        className="button--input--file--img--arrow--top"
-                                                        src="http://localhost:3000/assets/images/arrow-top.svg"
-                                                        alt="arrow_top"
-                                                        unoptimized={true}
-                                                        width={0}
-                                                        height={0}
-                                                    />
-                                                    <label htmlFor={`input--file--new--picture input--${elem+1}`} className="input--file--new--picture--label"></label>
-                                                    <input type="file" className={`input--file--new--picture input--${elem+1}`} name={`input--file--new--picture input--${elem+1}`} id={`input--file--new--picture input--${elem+1}`} onChange={handleChangeFileInput}/>
-                                                </button>
-                                            </div>
-                                            
-                                        )}
+                                                <label htmlFor="input--file--new--picture input--0" className="input--file--new--picture--label"></label>
+                                                <input type="file" className="input--file--new--picture input--0" name="input--file--new--picture input--0" id="input--file--new--picture input--0" onChange={handleChangeFileInput}/>
+                                            </button>
+                                        </div>
                                         
-                                        </div>
-                                    </div>
-                                <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
-                                </section>
-                                </>
-
-                        ):  getProduct.productFound[0].product_photos !== null ?
-
-                                <section className="main--article--specific--product--section--images">
-                                    <span className="main--article--specific--product--section--description--div--description--p--title">Photos</span>
-                                    <div className="main--article--specific--product--section--images--div--main">
-                                        <a className="main--article--specific--product--section--images--div--main--anchor" href={`${imageName}`} target="_blank" onClick={handleClickMainImage}>
-                                        <Image
-                                            className="main--article--specific--product--section--images--div--main--img img--0"
-                                            src={`${imageName}`}
-                                            data-img={`${imageName}`}
-                                            unoptimized={true}
-                                            alt="main-image"
-                                            fill
-                                            priority={true}
-                                            sizes="50px"
-                                        />
-                                        </a>
-
-                                        <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
-                                        <button type="button" className="button--input--file" name="button--input--file" id="button--input--file">
-                                            <Image
-                                                className="button--input--file--img--arrow--top"
-                                                src="http://localhost:3000/assets/images/arrow-top.svg"
-                                                alt="arrow_top"
-                                                unoptimized={true}
-                                                width={0}
-                                                height={0}
-                                            />
-                                            <label htmlFor="input--file--new--picture input--0" className="input--file--new--picture--label"></label>
-                                            <input type="file" className="input--file--new--picture input--0" name="input--file--new--picture input--0" id="input--file--new--picture input--0" onChange={handleChangeFileInput}/>
-                                        </button>
-                                    </div>
-                                    
-                                    <>
-                                    <div className="main--article--specific--product--section--images--div--others--wrap">
-                                        <div className="main--article--specific--product--section--images--div--others">
-
-                                            {imagesNamesProduct.slice(1).map( (elem, ind) => 
-                                                
-                                                <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap--wrap">
+                                        <>
+                                        <div className="main--article--specific--product--section--images--div--others--wrap">
+                                            <div className="main--article--specific--product--section--images--div--others">
+    
+                                                {imagesNamesProduct.slice(1).map( (elem, ind) => 
                                                     
-                                                    <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap" 
-                                                    onClick={handleClickDivOtherImage}>
-
-                                                        <Image
-                                                            className={`main--article--specific--product--section--images--div--others--grid--element--img img--${ind+1}`}
-                                                            src={`http://127.0.0.1:8000/assets/images/${elem}`}
-                                                            unoptimized={true}
-                                                            data-img={`http://127.0.0.1:8000/assets/images/${elem}`}
-                                                            alt="other-image"
-                                                            fill
-                                                            priority={true}
-                                                            sizes="50px"
-                                                        />
-
+                                                    <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap--wrap">
+                                                        
+                                                        <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap" 
+                                                        onClick={handleClickDivOtherImage}>
+    
+                                                            <Image
+                                                                className={`main--article--specific--product--section--images--div--others--grid--element--img img--${ind+1}`}
+                                                                src={`http://127.0.0.1:8000/assets/images/${elem}`}
+                                                                unoptimized={true}
+                                                                data-img={`http://127.0.0.1:8000/assets/images/${elem}`}
+                                                                alt="other-image"
+                                                                fill
+                                                                priority={true}
+                                                                sizes="50px"
+                                                            />
+    
+                                                        </div>
+    
+                                                        <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
+                                                        <button type="button" className="button--input--file" name="button--input--file" id="button--input--file">
+    
+                                                            <Image
+                                                                className="button--input--file--img--arrow--top"
+                                                                src="http://localhost:3000/assets/images/arrow-top.svg"
+                                                                alt="arrow_top"
+                                                                unoptimized={true}
+                                                                width={0}
+                                                                height={0}
+                                                            />
+                                                            <label htmlFor={`input--file--new--picture input--${ind+1}`} className="input--file--new--picture--label"></label>
+                                                            <input type="file" className={`input--file--new--picture input--${ind+1}`} name={`input--file--new--picture input--${ind+1}`} id={`input--file--new--picture input--${ind+1}`} onChange={handleChangeFileInput}/>
+                                                        </button>
                                                     </div>
-
-                                                    <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
-                                                    <button type="button" className="button--input--file" name="button--input--file" id="button--input--file">
-
-                                                        <Image
-                                                            className="button--input--file--img--arrow--top"
-                                                            src="http://localhost:3000/assets/images/arrow-top.svg"
-                                                            alt="arrow_top"
-                                                            unoptimized={true}
-                                                            width={0}
-                                                            height={0}
-                                                        />
-                                                        <label htmlFor={`input--file--new--picture input--${ind+1}`} className="input--file--new--picture--label"></label>
-                                                        <input type="file" className={`input--file--new--picture input--${ind+1}`} name={`input--file--new--picture input--${ind+1}`} id={`input--file--new--picture input--${ind+1}`} onChange={handleChangeFileInput}/>
-                                                    </button>
-                                                </div>
-
-                                            )}
-
-                                            {arrayClassNumber.map ( elem => 
-
-                                                <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap--wrap">
-
-                                                    <div className="main--article--specific--product--section--images--div--others--grid--element--img--wrap" 
-                                                    onClick={handleClickDivOtherImage}>
-
-                                                        <Image
-                                                            className={`main--article--specific--product--section--images--div--others--grid--element--img img--${elem}`}
-                                                            src="http://localhost:3000/assets/images/no_image.png"
-                                                            unoptimized={true}
-                                                            data-img="http://localhost:3000/assets/images/no_image.png"
-                                                            alt="other-image"
-                                                            fill
-                                                            priority={true}
-                                                            sizes="50px"
-                                                        />
-
+    
+                                                )}
+    
+                                                {arrayClassNumber.map ( elem => 
+    
+                                                    <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap--wrap">
+    
+                                                        <div className="main--article--specific--product--section--images--div--others--grid--element--img--wrap" 
+                                                        onClick={handleClickDivOtherImage}>
+    
+                                                            <Image
+                                                                className={`main--article--specific--product--section--images--div--others--grid--element--img img--${elem}`}
+                                                                src="http://localhost:3000/assets/images/no_image.png"
+                                                                unoptimized={true}
+                                                                data-img="http://localhost:3000/assets/images/no_image.png"
+                                                                alt="other-image"
+                                                                fill
+                                                                priority={true}
+                                                                sizes="50px"
+                                                            />
+    
+                                                        </div>
+    
+                                                        <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
+                                                        <button type="button" className="button--input--file" name="button--input--file" id="button--input--file">
+                                                            <Image
+                                                                className="button--input--file--img--arrow--top"
+                                                                src="http://localhost:3000/assets/images/arrow-top.svg"
+                                                                alt="arrow_top"
+                                                                unoptimized={true}
+                                                                width={0}
+                                                                height={0}
+                                                            />
+                                                            <label htmlFor={`input--file--new--picture input--${elem}`} className="input--file--new--picture--label"></label>
+                                                            <input type="file" className={`input--file--new--picture input--${elem}`} name={`input--file--new--picture input--${elem}`} id={`input--file--new--picture input--${elem}`} onChange={handleChangeFileInput}/>
+                                                        </button>
                                                     </div>
-
-                                                    <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
-                                                    <button type="button" className="button--input--file" name="button--input--file" id="button--input--file">
-                                                        <Image
-                                                            className="button--input--file--img--arrow--top"
-                                                            src="http://localhost:3000/assets/images/arrow-top.svg"
-                                                            alt="arrow_top"
-                                                            unoptimized={true}
-                                                            width={0}
-                                                            height={0}
-                                                        />
-                                                        <label htmlFor={`input--file--new--picture input--${elem}`} className="input--file--new--picture--label"></label>
-                                                        <input type="file" className={`input--file--new--picture input--${elem}`} name={`input--file--new--picture input--${elem}`} id={`input--file--new--picture input--${elem}`} onChange={handleChangeFileInput}/>
-                                                    </button>
-                                                </div>
-                                            )}
-
+                                                )}
+    
+                                            </div>
                                         </div>
-                                    </div>
-                                    <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
-                                    </>
-                                </section>
-
-                        :
-
-                            <>
-                            </>
-                        }
-
-                        <section className="main--article--specific--product--section--description update--description--section">
-                            <div className="main--article--specific--product--section--description--div--description update--div">
-
-                                <span className="main--article--specific--product--section--description--div--description--p--title">Description</span>
-                                <p className="main--article--specific--product--section--description--div--description--p update--description--element">
-                                    {getProduct.productFound[0].product_description}
-                                </p>
-
-                                <textarea className="update--textarea--description--element"></textarea>
-
-                                <div className="title--update--product--img--wrap edit--description" onClick={(e) => handleClickEditButton(e, "description")}>
-                                <Image
-                                    className="title--update--product--img"
-                                    src="/assets/images/edit-icon.svg"
-                                    alt="edit-icon"
-                                    height={0}
-                                    width={0}
-                                />
-                                </div>
-
-                                <div className="title--update--product--input--check--button check--description" id="title--update--product--input--check--button" onClick={(e) => handleClickConfirmNew(e, "description")}>
+                                        <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                                        </>
+                                    </section>
+    
+                            :
+    
+                                <>
+                                </>
+                            }
+    
+                            <section className="main--article--specific--product--section--description update--description--section">
+                                <div className="main--article--specific--product--section--description--div--description update--div">
+    
+                                    <span className="main--article--specific--product--section--description--div--description--p--title">Description</span>
+                                    <p className="main--article--specific--product--section--description--div--description--p update--description--element">
+                                        {getProduct.productFound[0].product_description}
+                                    </p>
+    
+                                    <textarea className="update--textarea--description--element"></textarea>
+    
+                                    <div className="title--update--product--img--wrap edit--description" onClick={(e) => handleClickEditButton(e, "description")}>
                                     <Image
-                                        className="title--update--product--input--check--button--img"
-                                        src="/assets/images/tick.svg"
-                                        alt="tick"
-                                        width={0}
+                                        className="title--update--product--img"
+                                        src="/assets/images/edit-icon.svg"
+                                        alt="edit-icon"
                                         height={0}
+                                        width={0}
                                     />
+                                    </div>
+    
+                                    <div className="title--update--product--input--check--button check--description" id="title--update--product--input--check--button" onClick={(e) => handleClickConfirmNew(e, "description")}>
+                                        <Image
+                                            className="title--update--product--input--check--button--img"
+                                            src="/assets/images/tick.svg"
+                                            alt="tick"
+                                            width={0}
+                                            height={0}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                                <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+    
+                                <div className="main--section--add--product--form--input--wrap update--product">
+                                    <label className="main--section--add--product--form--label--place update--product" htmlFor="main--section--add--product--form--input--place">Lieu:</label>
+                                    <input className="main--section--add--product--form--input--place" type="text" name="main--section--add--product--form--input--place" id="main--section--add--product--form--input--place" value={getCity} onChange={(e) => setCity(e.target.value)}/>
+                                </div>
+    
+                                <fieldset className="main--section--add--product--form--fieldset update--product">
+                                    <legend>
+                                        Livraison:
+                                    </legend>
+    
+                                    <label className="main--section--add--product--form--label--delivery--yes" htmlFor="main--section--add--product--form--input--delivery--yes">Oui</label>
+    
+                                    {getProduct.productFound[0].product_delivery == 1 ?
+    
+                                        <input className="main--section--add--product--form--input--delivery--yes" type="radio" name="main--section--add--product--form--checkbox--delivery" id="main--section--add--product--form--input--delivery--yes" value="main--section--add--product--form--input--delivery--yes" checked onChange={() => {}}/>
+    
+                                    :
+    
+                                        <input className="main--section--add--product--form--input--delivery--yes" type="radio" name="main--section--add--product--form--checkbox--delivery" id="main--section--add--product--form--input--delivery--yes" value="main--section--add--product--form--input--delivery--yes" onChange={() => {}}/>
+                                    }
+                                
+                                    <label className="main--section--add--product--form--label--delivery--no" htmlFor="main--section--add--product--form--input--delivery--no">Non</label>
+    
+                                    {getProduct.productFound[0].product_delivery == 0 ?
+    
+                                        <input className="main--section--add--product--form--input--delivery--no" type="radio" name="main--section--add--product--form--checkbox--delivery" id="main--section--add--product--form--input--delivery--no" value="main--section--add--product--form--input--delivery--no" checked onChange={() => {}}/>
+    
+                                    :
+    
+                                        <input className="main--section--add--product--form--input--delivery--no" type="radio" name="main--section--add--product--form--checkbox--delivery" id="main--section--add--product--form--input--delivery--no" value="main--section--add--product--form--input--delivery--no" onChange={() => {}}/>
+    
+                                    }
+    
+                                </fieldset>
+                            </section>
+    
+                        </div>
+    
+                        <button type="submit" className="submit--button--update--product" name="submit--button--update--product" id="submit--button--update--product">Valider les modifications</button>
+                    </form>
+                </article>
+                ):
+                <>
+                </>
+                }
+    
+                <Footer />
+            </main>
+        );
+    }
 
-                            <div className="main--section--add--product--form--input--wrap update--product">
-                                <label className="main--section--add--product--form--label--place update--product" htmlFor="main--section--add--product--form--input--place">Lieu:</label>
-                                <input className="main--section--add--product--form--input--place" type="text" name="main--section--add--product--form--input--place" id="main--section--add--product--form--input--place" value={getCity} onChange={(e) => setCity(e.target.value)}/>
-                            </div>
+    else {
 
-                            <fieldset className="main--section--add--product--form--fieldset update--product">
-                                <legend>
-                                    Livraison:
-                                </legend>
+        return redirect("/?upd=false");
+    }
 
-                                <label className="main--section--add--product--form--label--delivery--yes" htmlFor="main--section--add--product--form--input--delivery--yes">Oui</label>
-
-                                {getProduct.productFound[0].product_delivery == 1 ?
-
-                                    <input className="main--section--add--product--form--input--delivery--yes" type="radio" name="main--section--add--product--form--checkbox--delivery" id="main--section--add--product--form--input--delivery--yes" value="main--section--add--product--form--input--delivery--yes" checked onChange={() => {}}/>
-
-                                :
-
-                                    <input className="main--section--add--product--form--input--delivery--yes" type="radio" name="main--section--add--product--form--checkbox--delivery" id="main--section--add--product--form--input--delivery--yes" value="main--section--add--product--form--input--delivery--yes" onChange={() => {}}/>
-                                }
-                            
-                                <label className="main--section--add--product--form--label--delivery--no" htmlFor="main--section--add--product--form--input--delivery--no">Non</label>
-
-                                {getProduct.productFound[0].product_delivery == 0 ?
-
-                                    <input className="main--section--add--product--form--input--delivery--no" type="radio" name="main--section--add--product--form--checkbox--delivery" id="main--section--add--product--form--input--delivery--no" value="main--section--add--product--form--input--delivery--no" checked onChange={() => {}}/>
-
-                                :
-
-                                    <input className="main--section--add--product--form--input--delivery--no" type="radio" name="main--section--add--product--form--checkbox--delivery" id="main--section--add--product--form--input--delivery--no" value="main--section--add--product--form--input--delivery--no" onChange={() => {}}/>
-
-                                }
-
-                            </fieldset>
-                        </section>
-
-                    </div>
-
-                    <button type="submit" className="submit--button--update--product" name="submit--button--update--product" id="submit--button--update--product">Valider les modifications</button>
-                </form>
-            </article>
-            ):
-            <>
-            </>
-            }
-
-            <Footer />
-        </main>
-    );
 }

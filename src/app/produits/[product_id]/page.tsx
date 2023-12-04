@@ -35,6 +35,8 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
         dataContext.setProduct(data);
         setGetProduct(data);
 
+        console.log(data);
+
         if (data.productFound[0].product_photos !== null) {
             setImagesNamesProduct(data.productFound[0].product_photos.split(','));
             setImageName(data.productFound[0].product_photos.split(',')[0]);
@@ -110,7 +112,72 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
 
         (e.currentTarget as HTMLImageElement).getElementsByTagName("img")[0].src = anchorMainImage.href;
         (e.currentTarget as HTMLImageElement).getElementsByTagName("img")[0].setAttribute("data-img", anchorMainImage.href.replace("http://127.0.0.1:8000/assets/images/", ""));
-    }
+    };
+
+    const handleDeleteProduct = async (e: React.MouseEvent, product_id: string) => {
+
+        e.preventDefault();
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+        const asideError = (document.getElementsByClassName("aside aside--error")[0] as HTMLElement);
+        const spanError = (document.getElementsByClassName("aside--error--span--confirm")[0] as HTMLSpanElement);
+        const divConfirm = (document.getElementsByClassName("aside--error--div--confirm")[0] as HTMLDivElement);
+
+        spanError.textContent = "Êtes-vous sur de supprimer ce produit?";
+        divConfirm.classList.add("active");
+        asideError.classList.add("active");
+
+        
+    };
+
+    const handleYesConfirm = async (e: React.MouseEvent<HTMLSpanElement>, product_id: string) => {
+
+        e.preventDefault();
+        
+        const asideError = (document.getElementsByClassName("aside aside--error")[0] as HTMLElement);
+        const spanError = (document.getElementsByClassName("aside--error--span--confirm")[0] as HTMLSpanElement);
+        const divConfirm = (document.getElementsByClassName("aside--error--div--confirm")[0] as HTMLDivElement);
+
+        const response = await fetch(`http://127.0.0.1:8000/api/deleteproduct/${product_id}`, {
+
+            method: "DELETE",
+        });
+
+        const responseData = await response.json();
+
+        divConfirm.classList.remove("active");
+
+        if (responseData.flag) {
+
+            spanError.textContent = "Produit retiré avec succès";
+            asideError.classList.remove("aside", "aside--error");
+            asideError.classList.add("aside--success", "active_success");
+        }
+
+        else if (!responseData.flag) {
+
+            spanError.textContent = "Erreur lors de la suppression du produit";
+            asideError.classList.remove("aside--success", "active_success");
+            asideError.classList.add("aside", "aside--error", "active");
+        }
+
+        setTimeout(() => {
+
+            asideError.classList.remove("active", "active_success");
+            Router.push("/produits/mesproduits");
+        }, 2500);
+    };
+
+    const handleNoConfirm = () => {
+
+        const asideError = (document.getElementsByClassName("aside aside--error")[0] as HTMLElement);
+
+        asideError.classList.remove("active");
+    };
 
     useEffect(() => {
         fetchProduct();
@@ -126,6 +193,16 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
                 <Image className="main--button--back--img" src={arrowLeft} alt="arrow-left-image"/>
                 <span className="main--button--back--span">Retour</span>
             </button>
+
+            <aside className="aside aside--error error--confirm">
+                <span className="aside--error--span--confirm">
+                    Etes vous sur de supprimer ce produit?
+                </span>
+                <div className="aside--error--div--confirm">
+                    <span className="yes--confirm" onClick={(e) => handleYesConfirm(e, params.product_id)}>Oui</span>
+                    <span className="no--confirm" onClick={handleNoConfirm}>Non</span>
+                </div>
+            </aside>
 
             {getProduct.productFound[0] !== undefined ?
             
@@ -196,7 +273,7 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
 
                                 {imagesNamesProduct.slice(1).map( elem => 
                                     
-                                    <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap" 
+                                    <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap product--id" 
                                     onClick={handleClickDivOtherImage}>
 
                                     <Image
@@ -218,6 +295,7 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
                         </div>
                         <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
                         </>
+
                         ):
 
                         <>
@@ -237,6 +315,18 @@ export default function ProductId({ params }: { params: {product_id: string}}) {
                         </div>
                         <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
                     </section>
+
+                    {userContext.user_id == getProduct.productFound[0].user_id ?
+
+                        <Link href="" className="main--article--specific--product--update--anchor delete" onClick={(e) => handleDeleteProduct(e, params.product_id)}>
+                            Supprimer
+                        </Link>
+
+                        :
+
+                        <>
+                        </>
+                    }
 
                 </div>
 

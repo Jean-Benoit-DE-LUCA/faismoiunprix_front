@@ -137,10 +137,78 @@ export default function Add() {
         {id: 3, name: "Image 3"}
     ];
 
-    const handleInputFileChange = (e: React.ChangeEvent<HTMLInputElement> | any) => {
+    const handleInputFileChange = (e: React.ChangeEvent<HTMLInputElement> | any, inputNumber: number) => {
         
         const nameImage = e.target.value.replace("C:\\fakepath\\", "").trim();
         e.currentTarget.parentElement.getElementsByClassName("main--section--add--product--form--label--file--span")[0].textContent = nameImage;
+
+        const anchorMainImage = (document.getElementsByClassName("main--article--specific--product--section--images--div--main--anchor")[0] as HTMLAnchorElement);
+
+        const imgElements = (document.getElementsByClassName("image--number"));
+        
+        for (const imgElement of imgElements) {
+
+            if (imgElement.classList.contains(`img--${inputNumber}`)) {
+
+                const fileReader = new FileReader();
+
+                fileReader.onload = (e) => {
+
+                   (imgElement as HTMLImageElement).src = e.target?.result as string;
+                   (imgElement as HTMLImageElement).setAttribute("data-img", e.target?.result as string);
+
+                   if (inputNumber == 0) {
+
+                        anchorMainImage.href = e.target?.result as string;
+                   }
+                }
+
+                fileReader.readAsDataURL(e.target.files[0]);
+            }
+        }
+    };
+
+    const handleClickCrossDelete = (e: React.MouseEvent<HTMLElement>) => {
+        
+        const currentImg = (e.currentTarget.parentElement?.getElementsByTagName("img")[0] as HTMLImageElement);
+
+        const currentImgNumberAttribute = currentImg.getAttribute("data-img-number");
+        
+        const inputFiles = (document.getElementsByClassName("main--section--add--product--form--input--file") as HTMLCollectionOf<HTMLInputElement>);
+
+        for (const input of inputFiles) {
+
+            if (input.id.includes(`file--${currentImgNumberAttribute}`)) {
+
+                input.value = "";
+
+                (input.parentElement?.getElementsByClassName("main--section--add--product--form--label--file--span")[0] as HTMLSpanElement
+                ).textContent = "Choisir une image";
+            }
+        }
+
+        if (currentImgNumberAttribute == "0") {
+
+            const anchorMainImage = (document.getElementsByClassName("main--article--specific--product--section--images--div--main--anchor")[0] as HTMLAnchorElement);
+
+            anchorMainImage.href = "http://localhost:3000/assets/images/no_image.png";
+        }
+
+
+        currentImg.src = "http://localhost:3000/assets/images/no_image.png";
+        currentImg.setAttribute("data-img", "http://localhost:3000/assets/images/no_image.png");
+
+    }
+
+    const handleClickMainImage = (e: React.MouseEvent<HTMLAnchorElement>) => {
+
+        if (e.currentTarget.href.startsWith("data")) {
+
+            e.preventDefault();
+
+            const newWindow = window.open();
+            newWindow?.document.write(`<iframe src=${e.currentTarget.href} frameborder="0" style="border:0; width: 100%; height: 100%" allowfullscreen></iframe>`)
+        }
     };
 
     if (userContext.user_jwt !== "") {
@@ -169,19 +237,89 @@ export default function Add() {
                             </textarea>
                         </div>
 
+
+                        {/**/}
+
+
+                        <>
+                                <section className="main--article--specific--product--section--images">
+                                    <div className="main--article--specific--product--section--images--div--main add--product">
+                                        <a className="main--article--specific--product--section--images--div--main--anchor" href="http://localhost:3000/assets/images/no_image.png" target="_blank" onClick={handleClickMainImage}>
+                                            <Image
+                                                className="main--article--specific--product--section--images--div--main--img img--0 image--number"
+                                                src="http://localhost:3000/assets/images/no_image.png"
+                                                data-img="http://localhost:3000/assets/images/no_image.png"
+                                                data-img-number="0"
+                                                unoptimized={true}
+                                                alt="main-image"
+                                                fill
+                                                priority={true}
+                                                sizes="50px"
+                                            />
+                                        </a>
+
+                                        <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
+                                       
+                                    </div>
+                                    {/*<span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>*/}
+                                
+
+                                
+                                    <div className="main--article--specific--product--section--images--div--others--wrap">
+                                        <div className="main--article--specific--product--section--images--div--others add--product--others">
+
+                                        {Array.from(Array(2).keys()).map( elem => 
+
+                                            <div key={elem} className="main--article--specific--product--section--images--div--others--grid--element--img--wrap--wrap">
+                                                <div className="main--article--specific--product--section--images--div--others--grid--element--img--wrap">
+
+                                                <Image
+                                                    className={`main--article--specific--product--section--images--div--others--grid--element--img img--${elem+1} image--number`}
+                                                    src="http://localhost:3000/assets/images/no_image.png"
+                                                    unoptimized={true}
+                                                    data-img="http://localhost:3000/assets/images/no_image.png"
+                                                    data-img-number={elem+1}
+                                                    alt="other-image"
+                                                    fill
+                                                    priority={true}
+                                                    sizes="50px"
+                                                />
+                                                
+                                                </div>
+
+                                                <button type="button" className="button--cross--delete" name="button--cross--delete" id="button--cross--delete" onClick={handleClickCrossDelete}>X</button>
+                                                
+                                            </div>
+                                            
+                                        )}
+                                        
+                                        </div>
+                                    </div>
+                                <span className="main--article--specific--product--h1--span main--article--specific--product--section--span"></span>
+                                </section>
+                                </>
+
+
+
+
+
+
+                        {/**/ }
+
+
                         <div className="main--section--add--product--form--input--wrap main--section--add--product--form--input--wrap--images">
                             <label className="main--section--add--product--form--label--file--title">Images
                             </label>
 
-                            {arrayImagesNumbers.map( elem => 
+                            {arrayImagesNumbers.map( (elem, ind) => 
                                 <div key={elem.id} className="main--section--add--product--form--label--file--wrap">
 
-                                    <label className="main--section--add--product--form--label--file" htmlFor={`main--section--add--product--form--input--file--${elem.id}`}>{elem.name}
+                                    <label className="main--section--add--product--form--label--file" htmlFor={`main--section--add--product--form--input--file--${ind}`}>{elem.name}
                                     </label>
 
                                     <span className="main--section--add--product--form--label--file--span">Choisir une image</span>
 
-                                    <input className={`main--section--add--product--form--input--file`} type="file" name={`main--section--add--product--form--input--file--${elem.id}`} id={`main--section--add--product--form--input--file--${elem.id}`} onChange={handleInputFileChange}/>
+                                    <input className={`main--section--add--product--form--input--file`} type="file" name={`main--section--add--product--form--input--file--${ind}`} id={`main--section--add--product--form--input--file--${ind}`} onChange={(e) => handleInputFileChange(e, ind)}/>
 
                                 </div>
                             )}

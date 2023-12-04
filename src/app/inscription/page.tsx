@@ -190,7 +190,7 @@ export default function Signup() {
 
             </form>
 
-            <Link className="main--section--signup--login--anchor" href="/connexion">
+            <Link className="main--section--signup--login--anchor register" href="/connexion">
                 <button className="main--section--signup--connection--button" type="button" name="main--section--signup--connection--button" id="main--section--signup--connection--button">Connexion</button>
             </Link>
 
